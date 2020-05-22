@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+
+    <title>Django-react Integration</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: aqua;
+        }
+
+        h2 {
+            color: blue;
+            margin-left: 40px;
+            margin-top: 20px;
+        }
+
+        span {
+            font-size: large;
+            color: green;
+        }
+
+        li {
+            color: green;
+            font-size: large;
+        }
+    </style>
+</head>
+
+<body>
+    <h1 style="margin-left: 30%; color: blue;">Django-react Integration using webpack</h1>
+    <hr color="blue">
+
+    <h2>1. Install python and node js.</h2>
+    <h2>2. Create a folder in which you are going to keep the two projects.</h2>
+    <h2>3. Install virtualenv and create it using command - </h2>
+    <div style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto;">
+        <span>virtualenv</span> <span style="background-color: yellow">virtualenv_name</span>
+    </div>
+    <h3 style="margin-left: 49%;">Or,</h3>
+    <div style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto;">
+        <span>virtualenv .</span>
+    </div>
+    <h2>4. Activate the virtualenv using command - </h2>
+    <div style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto;">
+        <span>.\Scripts\activate</span>
+    </div>
+    <h2>5. In the virtualenv, install django using the command in the terminal - </h2>
+    <div style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto;">
+        <span>pip install django</span>
+    </div>
+    <h2 style="margin-left: 530px;">Create the django project...</h2>
+    <div style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto;">
+        <span>django-admin startproject</span> <span style="background-color: yellow;">myproject</span>
+    </div>
+    <h2>6. Apply all django database migrations (optional).</h2>
+    <h2>7. Go to the root directory.</h2>
+    <h2>8. Create app ‘frontend’ using given command and add the app to the <span
+            style="font-size: 25px; color: brown;">Installed Apps</span> in the project's <span
+            style="font-size: 25px; color: brown;">settings.py</span> file - </h2>
+    <div style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto;">
+        <span>python manage.py startapp</span> <span style="background-color: yellow;">frontend</span>
+    </div>
+    <div
+        style="border: 1px solid blue; background-color: white; width:fit-content; padding-right: 70px; margin: auto; margin-top: 5px;">
+        <pre style="font-size: large; color: green;">
+            INSTALLED_APPS = [
+                'django.contrib.admin',
+                'django.contrib.auth',
+                'django.contrib.contenttypes',
+                'django.contrib.sessions',
+                'django.contrib.messages',
+                'django.contrib.staticfiles',
+                <span style="background-color: yellow;">'frontend',</span>
+            ]</pre>
+    </div>
+    <h2 style="margin-left: 100px;">Please make sure your directory structure is as follows :</h2>
+    <div style="border: 1px solid blue; background-color: white; width:280px; margin: auto;">
+        <h3 style="color: red; margin-left: 10%;">Folder_name</h3>
+        <ul style="margin-left: 10%;">
+            <li>myproject</li>
+            <ul>
+                <li>frontend</li>
+                <li>myproject</li>
+                <li>db.sqlite3</li>
+                <li>manage.py</li>
+            </ul>
+            <li>Lib</li>
+            <li>node_modules</li>
+            <li>Scripts</li>
+            <li>.babelrc</li>
+            <li>package-lock.json</li>
+            <li>package.json</li>
+            <li>pyvenv.cfg</li>
+            <li>webpack.config.js</li>
+        </ul>
+    </div>
+    <h2>9. Create directories for react...</h2>
+    <div style="border: 1px solid blue; background-color: white; width: 340px; padding-right: 40px; margin: auto;">
+        <h3 style="color: red; margin-left: 10%;">frontend</h3>
+        <ul style="margin-left: 10%;">
+            <li>src (All components of react)</li>
+            <ul>
+                <li>components</li>
+            </ul>
+            <li>static (compiled js)</li>
+            <ul>
+                <li>frontend</li>
+            </ul>
+            <li>templates (contains index.html)</li>
+            <ul>
+                <li>frontend</li>
+            </ul>
+            <li>manage.py</li>
+        </ul>
+    </div>
+    <h2>10. Initialize npm to create package.json file with all your javascript dependencies.</h2>
+    <div style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto;">
+        <span>npm init</span>
+    </div>
+    <h2>11. Install webpack and webpack cli.</h2>
+    <div style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto;">
+        <span>npm i -D webpack webpack-cli</span>
+    </div>
+    <h2>12. Install babel</h2>
+    <div style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto;">
+        <span>npm i -D @babel/core babel-loader @babel/preset-env @babel/preset-react
+            babel-plugin-transform-class-properties</span>
+    </div>
+    <h2>13. Install react and react-dom</h2>
+    <div style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto;">
+        <span>npm i react react-dom prop-types</span>
+    </div>
+    <h2>14. Create a <span style="font-size: 25px; color: brown;">.babelrc</span> file and a <span
+            style="font-size: 25px; color: brown;">webpack.config.js</span> file in the root directory.</h2>
+    <div style="border: 1px solid blue; background-color: white; width: 220px;; padding: 10px; margin: auto;">
+        <ul>
+            <li>myproject</li>
+            <li>Lib</li>
+            <li>node modules</li>
+            <li>package.json</li>
+            <li>package-lock.json</li>
+            <li style="background-color: yellow;">.babelrc</li>
+            <li style="background-color: yellow;">webpack.config.js</li>
+        </ul>
+    </div>
+    <h2>15. Edit the <span style="font-size: 25px; color: brown;">.babelrc</span> file as follows :</h2>
+    <div style="border: 1px solid blue; background-color: white; width:fit-content; padding-right: 40px; margin: auto;">
+        <pre style="font-size: large; color: green;">
+            {
+                "presets": ["@babel/preset-env", "@babel/preset-react"],
+                "plugins": ["transform-class-properties"]
+            }</pre>
+    </div>
+    <h2>16. Edit the <span style="font-size: 25px; color: brown;">webpack.config.js</span> file as follows :</h2>
+    <div style="border: 1px solid blue; background-color: white; width:fit-content; padding-right: 50px; margin: auto;">
+        <pre style="font-size: large; color: green;">
+            module.exports = {
+                module : {
+                    rules : [
+                        {
+                            test: /\.js$/,
+                            exclude: /node_modules/,
+                            use: {
+                                loader: "babel-loader"
+                            }
+                        }
+                    ]
+                }
+            }</pre>
+    </div>
+    <h2>17. Edit the <span style="font-size: 25px; color: brown;">package.json</span> file as follows :</h2>
+    <div style="border: 1px solid blue; background-color: white; width: 80%; padding-right: 30px; margin: auto;">
+        <pre style="font-size: large; color: green;">
+            {
+                "name": "lead-manager",
+                "version": "1.0.0",
+                "description": "",
+                "main": "index.js",
+                "scripts": {
+                  "dev": "webpack --mode development ./<span style="background-color: yellow;">myproject</span>/frontend/src/index.js --output 
+                            ./<span style="background-color: yellow;">myproject</span>/frontend/static/frontend/main.js",
+                  "build": "webpack --mode production ./<span style="background-color: yellow;">myproject</span>/frontend/src/index.js --output 
+                            ./<span style="background-color: yellow;">myproject</span>/frontend/static/frontend/main.js"
+                },
+                "author": "",
+                "license": "ISC",
+                "devDependencies": {
+                  "@babel/core": "^7.9.6",
+                  "@babel/preset-env": "^7.9.6",
+                  "@babel/preset-react": "^7.9.4",
+                  "babel-loader": "^8.1.0",
+                  "babel-plugin-transform-class-properties": "^6.24.1",
+                  "webpack": "^4.43.0",
+                  "webpack-cli": "^3.3.11"
+                },
+                "dependencies": {
+                  "prop-types": "^15.7.2",
+                  "react": "^16.13.1",
+                  "react-dom": "^16.13.1"
+                }
+              }</pre>
+    </div>
+    <h2>18. In the <span style="font-size: 25px; color: brown;">frontend/src</span>, create the file <span
+            style="font-size: 25px; color: brown;">index.js</span> as per the directory structure shown below :</h2>
+    <div style="border: 1px solid blue; background-color: white; width:fit-content; padding-right: 40px; margin: auto;">
+        <h3 style="color: red; margin-left: 10%;">frontend</h3>
+        <ul style="margin-left: 10%;">
+            <li>src</li>
+            <ul>
+                <li>components</li>
+                <li>index.js</li>
+            </ul>
+        </ul>
+    </div>
+    <h2>19. In the <span style="font-size: 25px; color: brown;">frontend/src/components</span>, create the file <span
+            style="font-size: 25px; color: brown;">App.js</span> as per the directory structure shown below :</h2>
+    <div style="border: 1px solid blue; background-color: white; width:fit-content; padding-right: 40px; margin: auto;">
+        <h3 style="color: red; margin-left: 10%;">frontend</h3>
+        <ul style="margin-left: 10%;">
+            <li>src</li>
+            <ul>
+                <li>components</li>
+                <ul>
+                    <li>App.js</li>
+                </ul>
+                <li>index.js</li>
+            </ul>
+        </ul>
+    </div>
+    <h2>20. Edit the <span style="font-size: 25px; color: brown;">App.js</span> file as follows :</h2>
+    <div style="border: 1px solid blue; background-color: white; width:fit-content; padding-right: 80px; margin: auto;">
+        <pre style="font-size: large; color: green;">
+            import React, { Component } from 'react';
+            import ReactDOM from 'react-dom';
+
+            class App extends Component {
+                render() {
+                    return (
+                        <span><</span><span>h1</span><span>></span>React app working in django server...<span><</span><span>/</span><span>h1</span><span>></span>
+                    )
+                }
+            }
+
+            ReactDOM.render(<span><</span><span>App</span><span>/</span><span>></span>, document.getElementById('app'));</pre>
+    </div>
+    <h2>21. Edit the <span style="font-size: 25px; color: brown;">index.js</span> file as follows :</h2>
+    <div style="border: 1px solid blue; background-color: white; width:fit-content; padding-right: 80px; margin: auto;">
+        <pre style="font-size: large; color: green;">
+            import App from './components/App';</pre>
+    </div>
+    <h2>22. Create an <span style="font-size: 25px; color: brown;">index.html</span> file in <span
+            style="font-size: 25px; color: brown;">frontend/templates/frontend</span> as per the directory structure
+        shown below :</h2>
+    <div style="border: 1px solid blue; background-color: white; width:fit-content; padding-right: 40px; margin: auto;">
+        <h3 style="color: red; margin-left: 10%;">frontend</h3>
+        <ul style="margin-left: 10%;">
+            <li>src</li>
+            <ul>
+                <li>components</li>
+                <ul>
+                    <li>App.js</li>
+                </ul>
+                <li>index.js</li>
+            </ul>
+            <li>static</li>
+            <ul>
+                <li>frontend</li>
+            </ul>
+            <li>templates</li>
+            <ul>
+                <li>frontend</li>
+                <ul>
+                    <li>index.html</li>
+                </ul>
+            </ul>
+            <li>manage.py</li>
+        </ul>
+    </div>
+    <h2>23. Edit the <span style="font-size: 25px; color: brown;">body</span> tag of <span
+            style="font-size: 25px; color: brown;">index.html</span> file as follows :</h2>
+    <div style="border: 1px solid blue; background-color: white; width:fit-content; padding-right: 80px; margin: auto;">
+        <pre style="font-size: large; color: green;">
+            <span><</span>body<span>></span>
+                {% load static %}
+                <span><</span><span>div</span> id="app"<span>></span><span><</span><span>/</span><span>div></span>
+                <span><</span>script src="{% static 'frontend/main.js' %}"<span>></span><span><</span><span>/</span>script<span>></span>
+            <span><</span>/body<span>></span></pre>
+    </div>
+    <h2>24. Edit the project's <span style="font-size: 25px; color: brown;">urls.py</span> file as follows :</h2>
+    <div style="border: 1px solid blue; background-color: white; width:fit-content; padding-right: 80px; margin: auto;">
+        <pre style="font-size: large; color: green;">
+            from django.contrib import admin
+            from django.urls import path, include
+
+            urlpatterns = [
+                path('admin/', admin.site.urls),
+                path('', include('frontend.urls')),
+            ]</pre>
+    </div>
+    <h2>25. Create <span style="font-size: 25px; color: brown;">urls.py</span> file in the <span
+            style="font-size: 25px; color: brown;">frontend</span> folder as per the directory structure shown below :
+    </h2>
+    <div style="border: 1px solid blue; background-color: white; width:fit-content; padding-right: 40px; margin: auto;">
+        <h3 style="color: red; margin-left: 10%;">frontend</h3>
+        <ul style="margin-left: 10%;">
+            <li>__pycache__</li>
+            <li>migrations</li>
+            <li>src</li>
+            <li>static</li>
+            <li>templates</li>
+            <li>__init__.py</li>
+            <li>admin.py</li>
+            <li>models.py</li>
+            <li>tests.py</li>
+            <li>urls.py</li>
+            <li>views.py</li>
+        </ul>
+    </div>
+    <h2>26. Edit the <span style="font-size: 25px; color: brown;">frontend</span>'s <span
+            style="font-size: 25px; color: brown;">urls.py</span> file as follows :</h2>
+    <div style="border: 1px solid blue; background-color: white; width:fit-content; padding-right: 80px; margin: auto;">
+        <pre style="font-size: large; color: green;">
+            from django.urls import path
+            from . import views
+            
+            urlpatterns = [
+                path('', views.index)
+            ]</pre>
+    </div>
+    <h2>27. Edit the <span style="font-size: 25px; color: brown;">frontend</span>'s <span
+            style="font-size: 25px; color: brown;">views.py</span> file as follows :</h2>
+    <div style="border: 1px solid blue; background-color: white; width:fit-content; padding-right: 80px; margin: auto;">
+        <pre style="font-size: large; color: green;">
+            from django.shortcuts import render
+
+            def index(request):
+                return render(request, 'frontend/index.html')</pre>
+    </div>
+    <h2>28. Now run the following command in the terminal...</h2>
+    <div style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto;">
+        <span>npm run dev</span>
+    </div>
+    <div
+        style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto; margin-top: 5px;">
+        <span style="color: red;">Note : </span><span>Be sure your virtual environment is activated during the
+            time.</span>
+    </div>
+    <h2 style="margin-left: 70px;">This command is gonna create the <span
+            style="font-size: 25px; color: brown;">main.js</span> file in <span
+            style="font-size: 25px; color: brown;">frontend/static/frontend/</span> as per the directory structure shown
+        below :</h2>
+    <div style="border: 1px solid blue; background-color: white; width:fit-content; padding-right: 40px; margin: auto;">
+        <h3 style="color: red; margin-left: 10%;">frontend</h3>
+        <ul style="margin-left: 10%;">
+            <li>src</li>
+            <ul>
+                <li>components</li>
+                <ul>
+                    <li>App.js</li>
+                </ul>
+                <li>index.js</li>
+            </ul>
+            <li>static</li>
+            <ul>
+                <li>frontend</li>
+                <ul>
+                    <li>main.js</li>
+                </ul>
+            </ul>
+            <li>templates</li>
+            <ul>
+                <li>frontend</li>
+                <ul>
+                    <li>index.html</li>
+                </ul>
+            </ul>
+            <li>manage.py</li>
+        </ul>
+    </div>
+    <h2>29. And Boom........ We've done that.......</h2>
+    <h2>30. Now start the django server using the given command and see the magic...</h2>
+    <div style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto;">
+        <span>python manage.py runserver</span>
+    </div>
+    <h2>31. You would see that <span style="font-size: 25px; color: brown;">React app working in django
+            server.....</span>is
+        printed on the browser page.</h2>
+    <h2>32. The Last Thing...</h2>
+    <h2 style="margin-left: 100px;">In this case you would have to run <span style="font-size: 25px; color: brown;">npm
+            run dev</span> every time you make any change in the project.</h2>
+    <h2 style="margin-left: 100px;">To solve this issue, just add
+        <span style="font-size: 25px; color: brown;">--watch</span> in the scripts section of
+        <span style="font-size: 25px; color: brown;">package.json</span> file as shown below.</h2>
+    <div style="border: 1px solid blue; background-color: white; width: 80%; padding-right: 30px; margin: auto;">
+        <pre style="font-size: large; color: green;">
+            {
+                "name": "lead-manager",
+                "version": "1.0.0",
+                "description": "",
+                "main": "index.js",
+                "scripts": {
+                    "dev": "webpack --mode development <span style="background-color: yellow;">--watch</span> ./myproject/frontend/src/index.js 
+                            --output ./myproject/frontend/static/frontend/main.js",
+                    "build": "webpack --mode production ./myproject/frontend/src/index.js --output 
+                            ./myproject/frontend/static/frontend/main.js"
+                },
+                "author": "",
+                "license": "ISC",
+                "devDependencies": {
+                    "@babel/core": "^7.9.6",
+                    "@babel/preset-env": "^7.9.6",
+                    "@babel/preset-react": "^7.9.4",
+                    "babel-loader": "^8.1.0",
+                    "babel-plugin-transform-class-properties": "^6.24.1",
+                    "webpack": "^4.43.0",
+                    "webpack-cli": "^3.3.11"
+                },
+                "dependencies": {
+                    "prop-types": "^15.7.2",
+                    "react": "^16.13.1",
+                    "react-dom": "^16.13.1"
+                }
+            }</pre>
+    </div>
+    <h1 style="color: blue; margin-left: 20%;">Everything is done now..... Enjoy coding your project...</h1>
+    <h1 style="color: blue; margin-left: 42%; font-size: 50px;">Thank you</h1>
+    <hr color="blue">
+    <div style="text-align: right;">
+        <h3 style="color: blue; padding-right: 6.5rem;">By...</h3>
+        <h2>Suarav Kumar Sharma</h2>
+    </div>
+</body>
+
+</html>
