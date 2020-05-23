@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>How to host django website on heroku</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: aqua;
+        }
+
+        h2 {
+            color: blue;
+            margin-left: 40px;
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: lighter;
+        }
+
+        span {
+            font-size: large;
+            color: green;
+        }
+
+        .span-container {
+            border: 1px solid blue;
+            background-color: white;
+        }
+
+        li {
+            color: green;
+            font-size: large;
+        }
+    </style>
+</head>
+
+<body>
+    <h1 class="" style="color: blue; padding-left: 20%;">Complete guide to host your django-website on heroku</h1>
+    <hr color="blue">
+    <h2>1. Copy your project separately.</h2>
+    <h2>2. Go to the official website of heroku and create your account.</h2>
+    <h2>3. The Heroku CLI requires git, so download git from it's official website.</h2>
+    <h2 class="pl-4">default, the 'git cmd' and 'git bash' will be installed along with git.</h2>
+    <h2>4. Go to the folder in which you have copied your files.</h2>
+    <h2>5. Open the command prompt or terminal there and navigate to that folder.</h2>
+    <h2>6. Install python virtual environment using the command - </h2>
+    <div style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto;">
+        <span>pip install pipenv</span>
+    </div>
+    <h2>7. You can check the git version using the command - </h2>
+    <div style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto;">
+        <span>git --version</span>
+    </div>
+    <h2>8. Login to heroku from the Command Line using the command - </h2>
+    <div style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto;">
+        <span>heroku login</span>
+    </div>
+    <h2>Please make sure your directory structure is as follows : </h2>
+    <div style="border: 1px solid blue; background-color: white; width:280px; margin: auto;">
+        <h3 style="color: red; margin-left: 10%;">Folder_name</h3>
+        <ul style="margin-left: 10%;">
+            <li>django_project</li>
+        </ul>
+    </div>
+    <h2>9. Create virtualenv using command - </h2>
+    <div style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto;">
+        <span>virtualenv .</span>
+    </div>
+    <h2>10. Activate the virtualenv using command - </h2>
+    <div style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto;">
+        <span>.\Scripts\activate</span>
+    </div>
+    <h2>11. Now your directory structure should be like : </h2>
+    <div style="border: 1px solid blue; background-color: white; width:280px; margin: auto;">
+        <h3 style="color: red; margin-left: 10%;">Folder_name</h3>
+        <ul style="margin-left: 10%;">
+            <li>django_project</li>
+            <li>Lib</li>
+            <li>Scripts</li>
+            <li>pyvenv.cfg</li>
+        </ul>
+    </div>
+    <h2>12. In the virtualenv, install django using the command in the terminal - </h2>
+    <div style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto;">
+        <span>pip install django</span>
+    </div>
+    <h2>13. Go to the project directory (where manage.py file exists) and create the requirements.txt file using the
+        command - </h2>
+    <div style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto;">
+        <span>pip freeze > requirements.txt</span>
+    </div>
+    <h2>14. Go to the root directory of your project and create a file 'Procfile'.</h2>
+    <div
+        style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto; margin-top: 5px;">
+        <span style="color: red;">Note : </span><span>Be sure the file 'Procfile' doesn't carry any extension.</span>
+    </div>
+    <h2>15. Edit the 'Procfile' and insert the code below : </h2>
+    <div style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto;">
+        <span>web: gunicorn your_project_name.wsgi</span>
+    </div>
+    <div
+        style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto; margin-top: 5px;">
+        <span style="color: red;">Note : </span><span>Be sure the name of your project is correct otherwise it is not
+            gonna be properly installed in heroku server.</span>
+    </div>
+    <h2>16. Install gunicorn using the command - </h2>
+    <div style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto;">
+        <span>pip install gunicorn</span>
+    </div>
+    <h2>17. Install django-heroku using the command - </h2>
+    <div style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto;">
+        <span>pip install django-heroku</span>
+    </div>
+    <h2>18. Import django-heroku at the top of the settings.py file of your django-project.</h2>
+    <div style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto;">
+        <span>import django_heroku</span>
+    </div>
+    <h2>19. Add the settings at the bottom of the settings.py file of your django-project.</h2>
+    <div style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto;">
+        <span>django_heroku.settings(locals())</span>
+    </div>
+    <h2>20. Add the extra modules to your requirements.txt file.</h2>
+    <div style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto;">
+        <span>pip freeze > requirements.txt</span>
+    </div>
+    <h2>21. Create your heroku app using the command - </h2>
+    <div style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto;">
+        <span>heroku create your_web_name</span>
+    </div>
+    <div
+        style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto; margin-top: 5px;">
+        <span style="color: red;">Note : </span><span>Be sure the name of your website is unique.</span>
+    </div>
+    <div
+        style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto; margin-top: 5px;">
+        <span>Check if your website has been created successfully.</span>
+    </div>
+    <h2>22. Go to the root directory of your project and initialize git using the command - </h2>
+    <div style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto;">
+        <span>git init</span>
+    </div>
+    <div
+        style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto; margin-top: 5px;">
+        <span>Check if a git repository has been created successfully.</span>
+    </div>
+    <h2>23. You can check your git status using the command - </h2>
+    <div style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto;">
+        <span>git status</span>
+    </div>
+    <h2>24. Add all the files using the command - </h2>
+    <div style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto;">
+        <span>git add --all</span>
+    </div>
+    <h2>25. Commit something to git using the command - </h2>
+    <div style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto;">
+        <span>git commit -m "your_commit"</span>
+    </div>
+    <div
+        style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto; margin-top: 5px;">
+        <span style="color: red;">eg. </span><span>git commit -m "First commit"</span>
+    </div>
+    <h2>26. Run the command - </h2>
+    <div style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto;">
+        <span>heroku git:remote -a your_web_name</span>
+    </div>
+    <h2>27. Push all the files using the command - </h2>
+    <div style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto;">
+        <span>git push heroku master</span>
+    </div>
+    <h2 style="color: blue;">28. Everything is done now..... Your app is live...</h2>
+    <h2 style="color: blue;">29. You can check it on - </h2>
+    <div style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto;">
+        <span>your_web_name.herokuapp.com</span>
+    </div>
+
+    <h1 class="" style="color: blue; padding-left: 40%; margin-top: 4rem;">Updating your website</h1>
+    <hr color="blue">
+
+    <h1 style="color: blue; font-weight: lighter;">In case you have make changes in your website, in order to update
+        these changes, follow the following steps :
+    </h1>
+    <h2>1. Go to the project folder and open check the git status in the command prompt using the command - </h2>
+    <div style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto;">
+        <span>git status</span>
+    </div>
+    <h2>2. If there are any changes, then add these changes using the command - </h2>
+    <div style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto;">
+        <span>git add --all</span>
+    </div>
+    <h2>3. Commit these changes using the command - </h2>
+    <div style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto;">
+        <span>git commit -m "commit_message"</span>
+    </div>
+    <h2>4. Push these changes to heroku server using the command - </h2>
+    <div style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto;">
+        <span>git push heroku master</span>
+    </div>
+    <h2>5. And it's done..... Your changes are updated.</h2>
+    <h1 style="color: blue; margin-left: 42%; font-size: 50px;">Thank you</h1>
+    <hr color="blue">
+    <div style="text-align: right;">
+        <h3 style="color: blue; padding-right: 5%;">By...</h3>
+        <h2>Saurav Kumar Sharma</h2>
+    </div>
+
+</html>
