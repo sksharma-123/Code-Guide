@@ -4,6 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 
     <title>How to host django website on heroku</title>
     <style>
@@ -17,10 +19,11 @@
 
         h2 {
             color: blue;
-            margin-left: 40px;
+            margin-left: 30px;
+            margin-right: 30px;
             margin-top: 20px;
             font-size: 19px;
-            font-weight: lighter;
+            font-weight: 400;
         }
 
         span {
@@ -41,7 +44,7 @@
 </head>
 
 <body>
-    <h1 class="" style="color: blue; padding-left: 25%;">Complete guide to host your django-website on heroku</h1>
+    <h1 class="text-center pt-2" style="color: blue; font-weight: 400;">Complete guide to host your django-website on heroku</h1>
     <hr color="blue">
     <h2>1. Copy your project separately.</h2>
     <h2>2. Go to the official website of heroku and create your account.</h2>
@@ -61,9 +64,9 @@
     <div style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto;">
         <span>heroku login</span>
     </div>
-    <h2 style="margin-left: 3.6rem;">Please make sure your directory structure is as follows : </h2>
+    <h2 class="ml-5">Please make sure your directory structure is as follows : </h2>
     <div style="border: 1px solid blue; background-color: white; width:280px; margin: auto;">
-        <h3 style="color: red; margin-left: 10%;">Folder_name</h3>
+        <h3 class="my-2" style="color: red; margin-left: 10%;">Folder_name</h3>
         <ul style="margin-left: 10%;">
             <li>django_project</li>
         </ul>
@@ -78,7 +81,7 @@
     </div>
     <h2>11. Now your directory structure should be like : </h2>
     <div style="border: 1px solid blue; background-color: white; width:280px; margin: auto;">
-        <h3 style="color: red; margin-left: 10%;">Folder_name</h3>
+        <h3 class="my-2" style="color: red; margin-left: 10%;">Folder_name</h3>
         <ul style="margin-left: 10%;">
             <li>django_project</li>
             <li>Lib</li>
@@ -92,13 +95,13 @@
     </div>
     <h2>13. Go to the project directory (where manage.py file exists) and create the requirements.txt file using the
         command - </h2>
-    <div
-        style="border: 1px solid blue; background-color: white; width:fit-content; padding-left: 10px; padding-right: 10px; margin: auto;">
+    <div class="px-2 mx-auto"
+        style="border: 1px solid blue; background-color: white; width:fit-content;">
         <span>
-            <pre>pip freeze > requirements.txt</pre></span>
+            <pre class="my-2">pip freeze > requirements.txt</pre></span>
     </div>
     <h2>14. Go to the root directory of your project and create a file 'Procfile'.</h2>
-    <div
+    <div class="mx-3"
         style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto; margin-top: 5px;">
         <span style="color: red;">Note : </span><span>Be sure the file 'Procfile' doesn't carry any extension.</span>
     </div>
@@ -106,7 +109,7 @@
     <div style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto;">
         <span>web: gunicorn your_project_name.wsgi</span>
     </div>
-    <div
+    <div class="mx-3"
         style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto; margin-top: 5px;">
         <span style="color: red;">Note : </span><span>Be sure the name of your project is correct otherwise it is not
             gonna be properly installed in heroku server.</span>
@@ -128,20 +131,20 @@
         <span>django_heroku.settings(locals())</span>
     </div>
     <h2>20. Add the extra modules to your requirements.txt file.</h2>
-    <div
-        style="border: 1px solid blue; background-color: white; width:fit-content; padding-left: 10px; padding-right: 10px; margin: auto;">
+    <div class="px-2 mx-auto"
+        style="border: 1px solid blue; background-color: white; width:fit-content;">
         <span>
-            <pre>pip freeze > requirements.txt</pre></span>
+            <pre class="my-2">pip freeze > requirements.txt</pre></span>
     </div>
     <h2>21. Create your heroku app using the command - </h2>
     <div style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto;">
         <span>heroku create your_web_name</span>
     </div>
-    <div
+    <div class="mx-3"
         style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto; margin-top: 5px;">
         <span style="color: red;">Note : </span><span>Be sure the name of your website is unique.</span>
     </div>
-    <div
+    <div class="mx-3"
         style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto; margin-top: 5px;">
         <span>Check if your website has been created successfully.</span>
     </div>
@@ -149,7 +152,7 @@
     <div style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto;">
         <span>git init</span>
     </div>
-    <div
+    <div class="mx-3"
         style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto; margin-top: 5px;">
         <span>Check if a git repository has been created successfully.</span>
     </div>
@@ -183,12 +186,12 @@
         <span>your_web_name.herokuapp.com</span>
     </div>
 
-    <h1 class="" style="color: blue; padding-left: 40%; margin-top: 4rem;">Updating your website</h1>
+    <h1 class="text-center mt-5" style="color: blue; font-weight: 400;">Updating your website</h1>
     <hr color="blue">
 
-    <h1 style="color: blue; font-weight: lighter;">In case you have make changes in your website, in order to update
+    <h2 class="text-center" style="color: brown;">In case you have make changes in your website, in order to update
         these changes, follow the following steps :
-    </h1>
+    </h2>
     <h2>1. Go to the project folder and open check the git status in the command prompt using the command - </h2>
     <div style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto;">
         <span>git status</span>
@@ -206,10 +209,11 @@
         <span>git push heroku master</span>
     </div>
     <h2>5. And it's done..... Your changes are updated.</h2>
-    <h1 style="color: blue; margin-left: 42%; font-size: 50px;">Thank you</h1>
     <hr color="blue">
-    <div style="text-align: right;">
-        <h3 style="color: blue; padding-right: 5%;">By...</h3>
+    <h1 class="text-center" style="color: blue; font-size: 50px; font-weight: 400;">Thank you</h1>
+    <hr color="blue">
+    <div class="text-center">
+        <h2 style="color: blue;">By...</h2>
         <h2>Saurav Kumar Sharma</h2>
     </div>
 
