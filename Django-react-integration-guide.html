@@ -9,7 +9,7 @@
         integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 
 
-    <title>Django-react Integration</title>
+    <title>Django-react Integration Guide</title>
     <style>
         * {
             box-sizing: border-box;
@@ -24,6 +24,7 @@
             margin-left: 20px;
             margin-right: 20px;
             margin-top: 20px;
+            font-weight: 400;
         }
 
         span {
@@ -290,7 +291,8 @@
         </div>
         <h4>21. Edit the <span style="font-size: 25px; color: brown;">index.js</span> file as follows :</h4>
         <div class="mx-auto div-width" style="border: 1px solid blue; background-color: white;">
-            <pre class="py-2 px-4 mb-0" style="font-size: large; color: green;">import App from './components/App';</pre>
+            <pre class="py-2 px-4 mb-0"
+                style="font-size: large; color: green;">import App from './components/App';</pre>
         </div>
         <h4 class="mr-5">22. Create an <span style="font-size: 25px; color: brown;">index.html</span> file in <span
                 style="font-size: 25px; color: brown;">frontend/templates/frontend</span> as per the directory structure
@@ -323,8 +325,7 @@
         </div>
         <h4>23. Edit the <span style="font-size: 25px; color: brown;">body</span> tag of <span
                 style="font-size: 25px; color: brown;">index.html</span> file as follows :</h4>
-        <div class="mx-auto div-width"
-            style="border: 1px solid blue; background-color: white;  padding-right: 80px; ">
+        <div class="mx-auto div-width" style="border: 1px solid blue; background-color: white;  padding-right: 80px; ">
             <pre class="my-2" style="font-size: large; color: green;">
             <span><</span>body<span>></span>
                 {% load static %}
@@ -333,8 +334,7 @@
             <span><</span>/body<span>></span></pre>
         </div>
         <h4>24. Edit the project's <span style="font-size: 25px; color: brown;">urls.py</span> file as follows :</h4>
-        <div class="mx-auto div-width"
-            style="border: 1px solid blue; background-color: white;  padding-right: 80px; ">
+        <div class="mx-auto div-width" style="border: 1px solid blue; background-color: white;  padding-right: 80px; ">
             <pre class="my-2" style="font-size: large; color: green;">
             from django.contrib import admin
             from django.urls import path, include
@@ -345,7 +345,8 @@
             ]</pre>
         </div>
         <h4>25. Create <span style="font-size: 25px; color: brown;">urls.py</span> file in the <span
-                style="font-size: 25px; color: brown;">frontend</span> folder as per the directory structure shown below:
+                style="font-size: 25px; color: brown;">frontend</span> folder as per the directory structure shown
+            below:
         </h4>
         <div class="mx-auto"
             style="border: 1px solid blue; background-color: white; width:fit-content; padding-right: 40px; ">
@@ -366,8 +367,7 @@
         </div>
         <h4>26. Edit the <span style="font-size: 25px; color: brown;">frontend</span>'s <span
                 style="font-size: 25px; color: brown;">urls.py</span> file as follows :</h4>
-        <div class="mx-auto div-width"
-            style="border: 1px solid blue; background-color: white;  padding-right: 80px; ">
+        <div class="mx-auto div-width" style="border: 1px solid blue; background-color: white;  padding-right: 80px; ">
             <pre class="my-2" style="font-size: large; color: green;">
             from django.urls import path
             from . import views
@@ -378,8 +378,7 @@
         </div>
         <h4>27. Edit the <span style="font-size: 25px; color: brown;">frontend</span>'s <span
                 style="font-size: 25px; color: brown;">views.py</span> file as follows :</h4>
-        <div class="mx-auto div-width"
-            style="border: 1px solid blue; background-color: white;  padding-right: 80px; ">
+        <div class="mx-auto div-width" style="border: 1px solid blue; background-color: white;  padding-right: 80px; ">
             <pre class="my-2" style="font-size: large; color: green;">
             from django.shortcuts import render
 
@@ -475,11 +474,11 @@
                 }
             }</pre>
         </div>
-        <h1 style="color: blue; margin-left: 20%;">Everything is done now..... Enjoy coding your project...</h1>
-        <h1 style="color: blue; margin-left: 42%; font-size: 50px;">Thank you</h1>
+        <h1 class="text-center" style="color: blue; font-weight: 400;">Everything is done now..... Enjoy coding your project...</h1>
+        <h1 class="text-center" style="color: blue; font-size: 50px; font-weight: 400;">Thank you</h1>
         <hr color="blue">
-        <div class="mx-auto" style="text-align: right;">
-            <h4 style="color: blue; padding-right: 8%;">By...</h4>
+        <div class="mx-auto">
+            <h4 style="color: blue;">By...</h4>
             <h4>Saurav Kumar Sharma</h4>
         </div>
 </body>
