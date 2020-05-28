@@ -85,220 +85,228 @@
     <h2>6. Install python virtual environment using the command - </h2>
     <div class=" mx-auto" style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px;">
         <span>pip install pipenv</span>
-        </div>
-        <h2>7. You can check the git version using the command - </h2>
-        <div class="mx-auto" style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px;">
-            <span>git --version</span>
-        </div>
-        <h2>8. Before pushing the files to <span>heroku</span>, we need to make some changes in the django and react
-            settings.</h2>
-        <h2 class="text-center">Please make sure your directory structure is as follows : </h2>
-        <div class="mx-auto" style="border: 1px solid blue; background-color: white; width:280px;">
-            <h3 class="my-2" style="color: red; margin-left: 10%;">Folder_name</h3>
-            <ul style="margin-left: 10%;">
-                <li>django_project</li>
-            </ul>
-        </div>
-        <h2>9. Create <span>virtualenv</span> using command - </h2>
-        <div class="mx-auto" style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px;">
-            <span>virtualenv env</span>
-        </div>
-        <h2>10. Activate the <span>virtualenv</span> using command - </h2>
-        <div class="mx-auto" style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px;">
-            <span>env\Scripts\activate</span>
-        </div>
-        <h2>11. Now your directory structure should be like : </h2>
-        <div class="mx-auto" style="border: 1px solid blue; background-color: white; width:280px;">
-            <h3 class="my-2" style="color: red; margin-left: 10%;">Folder_name</h3>
-            <ul style="margin-left: 10%;">
-                <li>django_project</li>
-                <li>django_app</li>
-                <li><span style="background-color: yellow;">env</span></li>
-                <li>public</li>
-                <li>src</li>
-                <li>.gitignore</li>
-                <li>db.sqlite3</li>
-                <li>manage.py</li>
-                <li>package-lock.json</li>
-                <li>package.json</li>
-            </ul>
-        </div>
-        <h2>12. Login to heroku from the Command Line using the command - </h2>
-        <div class="mx-auto" style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px;">
-            <span>heroku login</span>
-        </div>
-        <h2>13. Create your <span>web app</span> using the command - </h2>
-        <div class="mx-auto" style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px;">
-            <span>heroku create </span><span style="background-color: yellow;">app_name</span>
-        </div>
-        <h2>14. Initialize your <span>git repository</span> using the command - </h2>
-        <div class="mx-auto" style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px;">
-            <span>git init</span>
-        </div>
-        <h2>15. Add your <span>website</span> to <span>heroku</span> using the command - </h2>
-        <div class="mx-auto" style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px;">
-            <span>heroku git:remote -a </span><span style="background-color: yellow;">app_name</span>
-        </div>
-        <h2>16. Now, we need <span>buildpacks</span> for <span>django</span> and <span>reactjs</span>.</h2>
-        <h2 class="ml-5">First we will create the <span>buildpack</span> for <span>django</span> using the command - </h2>
-        <div class="mx-auto" style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px;">
-            <span>heroku buildpacks:set heroku/python</span>
-        </div>
-        <h2>17. Then, we'll create the <span>buildpack</span> for <span>reactjs</span> using the command - </h2>
-        <div class="mx-auto div-diff" style="border: 1px solid blue; background-color: white; padding: 10px;">
-            <span>heroku buildpacks:add --index 1 heroku/nodejs</span>
-        </div>
-        <h2>18. We need <span>whitenoise</span> to serve static files, so install it inside the virtualenv in the
-            terminal using the
-            command - </h2>
-        <div class="mx-auto" style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px;">
-            <span>pip install whitenoise</span>
-        </div>
-        <h2>19. We need <span>gunicorn</span> to run our server, so install it inside the virtualenv in the terminal
-            using the
-            command - </h2>
-        <div class="mx-auto" style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px;">
-            <span>pip install gunicorn</span>
-        </div>
-        <h2 class="text-center">Mention all the requirement packages in <span>requirements.txt</span> file using the
-            command - </h2>
-        <div class="mx-auto d-block mt-3 px-3 pt-3 special-width"
-            style="border: 1px solid blue; background-color: white;">
-            <pre style="font-size: large; color: green;">pip freeze > requirements.txt</pre>
-        </div>
-        <h2>20. Edit the <span>settings.py</span> file as shown below : </h2>
-        <div class="mx-auto d-block mt-3 px-3 pt-3 special-width"
-            style="border: 1px solid blue; background-color: white;">
-            <pre
-                style="font-size: large; color: green;">ALLOWED_HOSTS = ['<span style="background-color: yellow;">app_name</span>.herokuapp.com', 'localhost']</pre>
-        </div>
-        <div class="mx-auto d-block mt-3 pr-3 pt-3 special-width"
-            style="border: 1px solid blue; background-color: white;">
-            <pre style="font-size: large; color: green;">
-            INSTALLED_APPS = [
-                #...
-                <span style="background-color: yellow;">'whitenoise.runserver_nostatic',</span>
-                'django.contrib.staticfiles',
-                <span style="background-color: yellow;">'django_app'</span>
-            ]</pre>
-        </div>
-        <div class="mx-auto d-block mt-3 pr-3 pt-3 special-width"
-            style="border: 1px solid blue; background-color: white;">
-            <pre style="font-size: large; color: green;">
-            MIDDLEWARE = [
-                'django.middleware.security.SecurityMiddleware',
-                <span style="background-color: yellow;">'whitenoise.middleware.WhiteNoiseMiddleware',</span>
-                # ...
-            ]</pre>
-        </div>
-        <div class="mx-auto d-block mt-3 pr-3 pt-3 special-width"
-            style="border: 1px solid blue; background-color: white;">
-            <pre style="font-size: large; color: green;">
-            STATIC_URL = '/static/'
-            
-            STATICFILES_DIRS = [
-                os.path.join(BASE_DIR, 'build/static'),
-            ]
+    </div>
+    <h2>7. You can check the git version using the command - </h2>
+    <div class="mx-auto" style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px;">
+        <span>git --version</span>
+    </div>
+    <h2>8. Before pushing the files to <span>heroku</span>, we need to make some changes in the django and react
+        settings.</h2>
+    <h2 class="text-center">Please make sure your directory structure is as follows : </h2>
+    <div class="mx-auto" style="border: 1px solid blue; background-color: white; width:280px;">
+        <h3 class="my-2" style="color: red; margin-left: 10%;">Folder_name</h3>
+        <ul style="margin-left: 10%;">
+            <li>django_project</li>
+        </ul>
+    </div>
+    <h2>9. Create <span>virtualenv</span> using command - </h2>
+    <div class="mx-auto" style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px;">
+        <span>virtualenv env</span>
+    </div>
+    <h2>10. Activate the <span>virtualenv</span> using command - </h2>
+    <div class="mx-auto" style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px;">
+        <span>env\Scripts\activate</span>
+    </div>
+    <h2>11. Now your directory structure should be like : </h2>
+    <div class="mx-auto" style="border: 1px solid blue; background-color: white; width:280px;">
+        <h3 class="my-2" style="color: red; margin-left: 10%;">Folder_name</h3>
+        <ul style="margin-left: 10%;">
+            <li>django_project</li>
+            <li>django_app</li>
+            <li><span style="background-color: yellow;">env</span></li>
+            <li>public</li>
+            <li>src</li>
+            <li>.gitignore</li>
+            <li>db.sqlite3</li>
+            <li>manage.py</li>
+            <li>package-lock.json</li>
+            <li>package.json</li>
+        </ul>
+    </div>
+    <h2>12. Login to heroku from the Command Line using the command - </h2>
+    <div class="mx-auto" style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px;">
+        <span>heroku login</span>
+    </div>
+    <h2>13. Create your <span>web app</span> using the command - </h2>
+    <div class="mx-auto" style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px;">
+        <span>heroku create </span><span style="background-color: yellow;">app_name</span>
+    </div>
+    <h2>14. Initialize your <span>git repository</span> using the command - </h2>
+    <div class="mx-auto" style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px;">
+        <span>git init</span>
+    </div>
+    <h2>15. Add your <span>website</span> to <span>heroku</span> using the command - </h2>
+    <div class="mx-auto" style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px;">
+        <span>heroku git:remote -a </span><span style="background-color: yellow;">app_name</span>
+    </div>
+    <h2>16. Now, we need <span>buildpacks</span> for <span>django</span> and <span>reactjs</span>.</h2>
+    <h2 class="ml-5">First we will create the <span>buildpack</span> for <span>django</span> using the command -
+    </h2>
+    <div class="mx-auto" style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px;">
+        <span>heroku buildpacks:set heroku/python</span>
+    </div>
+    <h2>17. Then, we'll create the <span>buildpack</span> for <span>reactjs</span> using the command - </h2>
+    <div class="mx-auto div-diff" style="border: 1px solid blue; background-color: white; padding: 10px;">
+        <span>heroku buildpacks:add --index 1 heroku/nodejs</span>
+    </div>
+    <h2>18. We need <span>whitenoise</span> to serve static files, so install it inside the virtualenv in the
+        terminal using the
+        command - </h2>
+    <div class="mx-auto" style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px;">
+        <span>pip install whitenoise</span>
+    </div>
+    <h2>19. We need <span>gunicorn</span> to run our server, so install it inside the virtualenv in the terminal
+        using the
+        command - </h2>
+    <div class="mx-auto" style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px;">
+        <span>pip install gunicorn</span>
+    </div>
+    <h2 class="text-center">Mention all the requirement packages in <span>requirements.txt</span> file using the
+        command - </h2>
+    <div class="mx-auto d-block mt-3 px-3 pt-3 special-width"
+        style="border: 1px solid blue; background-color: white;">
+        <pre style="font-size: large; color: green;">pip freeze > requirements.txt</pre>
+    </div>
+    <h2>20. Edit the <span>settings.py</span> file as shown below : </h2>
+    <div class="mx-auto d-block mt-3 px-3 pt-3 special-width"
+        style="border: 1px solid blue; background-color: white;">
+        <pre
+            style="font-size: large; color: green;">ALLOWED_HOSTS = ['<span style="background-color: yellow;">app_name</span>.herokuapp.com', 'localhost']</pre>
+    </div>
+    <div class="mx-auto d-block mt-3 pr-3 pt-3 special-width"
+        style="border: 1px solid blue; background-color: white;">
+        <pre style="font-size: large; color: green;">
+        INSTALLED_APPS = [
+            #...
+            <span style="background-color: yellow;">'whitenoise.runserver_nostatic',</span>
+            'django.contrib.staticfiles',
+            <span style="background-color: yellow;">'django_app'</span>
+        ]</pre>
+    </div>
+    <div class="mx-auto d-block mt-3 pr-3 pt-3 special-width"
+        style="border: 1px solid blue; background-color: white;">
+        <pre style="font-size: large; color: green;">
+        MIDDLEWARE = [
+            'django.middleware.security.SecurityMiddleware',
+            <span style="background-color: yellow;">'whitenoise.middleware.WhiteNoiseMiddleware',</span>
+            # ...
+        ]</pre>
+    </div>
+    <div class="mx-auto d-block mt-3 pr-3 pt-3 special-width"
+        style="border: 1px solid blue; background-color: white;">
+        <pre style="font-size: large; color: green;">
+        STATIC_URL = '/static/'
+        
+        STATICFILES_DIRS = [
+            os.path.join(BASE_DIR, 'build/static'),
+        ]
 
-            STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+        STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-            STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'</pre>
-        </div>
-        <div class="mx-auto d-block mt-3 pr-3 pt-3 special-width"
-            style="border: 1px solid blue; background-color: white;">
-            <pre style="font-size: large; color: green;">
-            TEMPLATES = [
-                {
-                    #...
-                    'DIRS': [os.path.join(BASE_DIR, '<span style="background-color: yellow;">build</span>')],
-                    'APP_DIRS': True,
-                    #...
-                },
-            ]</pre>
-        </div>
-        <h2>21. Create a file <span>Procfile</span> in the root folder directory and edit it as follows :</h2>
-        <div class="mx-auto d-block mt-3 pr-5 pt-3 special-width"
-            style="border: 1px solid blue; background-color: white;">
-            <pre style="font-size: large; color: green;">
-            release: python manage.py migrate
-            web: gunicorn <span style="background-color: yellow;">django_project</span>.wsgi</pre>
-        </div>
-        <h2>22. Create a file <span>runtime.txt</span> in the root folder directory and mention the python version in it
-            as
-            follows :</h2>
-        <div class="mx-auto d-block mt-3 px-3 pt-3 special-width"
-            style="border: 1px solid blue; background-color: white;">
-            <pre style="font-size: large; color: green;">python-3.8.2</pre>
-        </div>
-        <h2 class="text-center">Now your directory structure should be like : </h2>
-        <div class="mx-auto" style="border: 1px solid blue; background-color: white; width:280px;">
-            <h3 class="my-2" style="color: red; margin-left: 10%;">Folder_name</h3>
-            <ul style="margin-left: 10%;">
-                <li>django_project</li>
-                <li>django_app</li>
-                <li>env</li>
-                <li>public</li>
-                <li>src</li>
-                <li>.gitignore</li>
-                <li>db.sqlite3</li>
-                <li>manage.py</li>
-                <li>package-lock.json</li>
-                <li>package.json</li>
-                <li><span style="background-color: yellow;">Procfile</span></li>
-                <li><span style="background-color: yellow;">runtime.txt</span></li>
-            </ul>
-        </div>
-        <h2>23. Now edit the <span>package.json</span> file as follows :</h2>
-        <div class="mx-auto d-block mt-3 pr-3 pt-3 special-width"
-            style="border: 1px solid blue; background-color: white;">
-            <pre style="font-size: large; color: green;">
+        STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'</pre>
+    </div>
+    <div class="mx-auto d-block mt-3 pr-3 pt-3 special-width"
+        style="border: 1px solid blue; background-color: white;">
+        <pre style="font-size: large; color: green;">
+        TEMPLATES = [
             {
                 #...
-                "scripts": {
-                  "start": "react-scripts start",
-                  "build": "react-scripts build",
-                  "test": "react-scripts test",
-                  "eject": "react-scripts eject",
-                  "postinstall": "npm run build"
-                },
+                'DIRS': [os.path.join(BASE_DIR, '<span style="background-color: yellow;">build</span>')],
+                'APP_DIRS': True,
                 #...
-                "browserslist": {
-                  "production": [
-                    ">0.2%",
-                    "not dead",
-                    "not op_mini all"
-                  ],
-                  "development": [
-                    "last 1 chrome version",
-                    "last 1 firefox version",
-                    "last 1 safari version"
-                  ]
-                },
-                "engines": {
-                  "node": "<span style="background-color: yellow;">Your node version</span>",
-                  "npm": "<span style="background-color: yellow;">Your npm version</span>"
-                }
-            }</pre>
-        </div>
-        <h2>24. Don't forget to mention the <span>virtualenv name</span> in <span>.gitignore</span> file.</h2>
-        <div class="mx-auto" style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px;">
-            <span style="background-color: yellow;">env</span><br>
-            <span>\node_modules</span>
-        </div>
-        <h2>25. Run the command - </h2>
-        <div class="mx-auto" style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px;">
-            <span>git add .</span>
-        </div>
-        <h2>26. <span>Commit</span> to git using the command - </h2>
-        <div class="mx-auto" style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px;">
-            <span>git commit -am "Commit message"</span>
-        </div>
-        <h2>27. Now push your files to <span>heroku</span> using the command - </h2>
-        <div class="mx-auto" style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px;">
-            <span>git push heroku master</span>
-        </div>
-        <h2>28. And it's done....</h2>
-        <h2>29. Your website has been created <span>successfully</span>.</h2>
+            },
+        ]</pre>
+    </div>
+    <h2>21. Create a file <span>Procfile</span> in the root folder directory and edit it as follows :</h2>
+    <div class="mx-auto d-block mt-3 pr-5 pt-3 special-width"
+        style="border: 1px solid blue; background-color: white;">
+        <pre style="font-size: large; color: green;">
+        release: python manage.py migrate
+        web: gunicorn <span style="background-color: yellow;">django_project</span>.wsgi</pre>
+    </div>
+    <h2>22. Create a file <span>runtime.txt</span> in the root folder directory and mention the python version in it
+        as
+        follows :</h2>
+    <div class="mx-auto d-block mt-3 px-3 pt-3"
+        style="border: 1px solid blue; background-color: white; width: fit-content;">
+        <pre style="font-size: large; color: green;">python-3.8.2</pre>
+    </div>
+    <h2 class="text-center">Now your directory structure should be like : </h2>
+    <div class="mx-auto" style="border: 1px solid blue; background-color: white; width:280px;">
+        <h3 class="my-2" style="color: red; margin-left: 10%;">Folder_name</h3>
+        <ul style="margin-left: 10%;">
+            <li>django_project</li>
+            <li>django_app</li>
+            <li>env</li>
+            <li>public</li>
+            <li>src</li>
+            <li>.gitignore</li>
+            <li>db.sqlite3</li>
+            <li>manage.py</li>
+            <li>package-lock.json</li>
+            <li>package.json</li>
+            <li><span style="background-color: yellow;">Procfile</span></li>
+            <li><span style="background-color: yellow;">runtime.txt</span></li>
+        </ul>
+    </div>
+    <h2>23. Now edit the <span>package.json</span> file as follows :</h2>
+    <div class="mx-auto d-block mt-3 pr-3 pt-3 special-width"
+        style="border: 1px solid blue; background-color: white;">
+        <pre style="font-size: large; color: green;">
+        {
+            #...
+            "scripts": {
+                "start": "react-scripts start",
+                "build": "react-scripts build",
+                "test": "react-scripts test",
+                "eject": "react-scripts eject",
+                "postinstall": "npm run build"
+            },
+            #...
+            "browserslist": {
+                "production": [
+                ">0.2%",
+                "not dead",
+                "not op_mini all"
+                ],
+                "development": [
+                "last 1 chrome version",
+                "last 1 firefox version",
+                "last 1 safari version"
+                ]
+            },
+            "engines": {
+                "node": "<span style="background-color: yellow;">Your node version</span>",
+                "npm": "<span style="background-color: yellow;">Your npm version</span>"
+            }
+        }</pre>
+    </div>
+    <h2>24. Don't forget to mention the <span>virtualenv name</span> in <span>.gitignore</span> file.</h2>
+    <div class="mx-auto" style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px;">
+        <span style="background-color: yellow;">env</span><br>
+        <span>\node_modules</span>
+    </div>
+    <h2>25. Run the command - </h2>
+    <div class="mx-auto" style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px;">
+        <span>git add .</span>
+    </div>
+    <h2>26. <span>Commit</span> to git using the command - </h2>
+    <div class="mx-auto" style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px;">
+        <span>git commit -am "Commit message"</span>
+    </div>
+    <h2>27. Now push your files to <span>heroku</span> using the command - </h2>
+    <div class="mx-auto" style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px;">
+        <span>git push heroku master</span>
+    </div>
+    <h2>28. And it's done....</h2>
+    <h2>29. Your website has been created <span>successfully</span>.</h2>
+    <hr color="blue">
+    <h1 class="text-center" style="color: blue; font-size: 50px; font-weight: 400;">Thank you</h1>
+    <hr color="blue">
+    <div class="text-center">
+        <h2 style="color: blue;">By...</h2>
+        <h2>Saurav Kumar Sharma</h2>
+    </div>
 </body>
 
 </html>
