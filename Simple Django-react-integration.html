@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <title>Simple Django-react integration</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: aqua;
+        }
+
+        h4 {
+            color: blue;
+            margin-left: 20px;
+            margin-right: 20px;
+            margin-top: 20px;
+            font-weight: 370;
+        }
+
+        span {
+            font-size: large;
+            color: green;
+        }
+
+        li {
+            color: green;
+            font-size: large;
+        }
+
+        .div-width {
+            width: fit-content;
+        }
+
+        .special-width {
+            width: fit-content;
+        }
+
+        @media(max-width: 768px) {
+            .div-width {
+                width: 315px;
+            }
+
+            .special-width {
+                width: 315px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h2 class="text-center pt-2" style="color: blue;">Simple Django-react Integration</h2>
+    <hr color="blue">
+
+    <h4>1. Install <span>python</span> and <span>node js</span>.</h4>
+    <h4>2. Create a folder in which you are going to keep the two projects.</h4>
+    <h4>3. Install <span>virtualenv</span> and create it using command - </h4>
+    <div class="mx-auto" style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px;">
+        <span>virtualenv</span> <span style="background-color: yellow">env</span>
+    </div>
+    <h4>4. Activate the <span>virtualenv</span> using command - </h4>
+    <div class="mx-auto" style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; ">
+        <span>env\Scripts\activate</span>
+    </div>
+    <h4>5. In the virtualenv, install <span>django</span> using the command in the terminal - </h4>
+    <div class="mx-auto" style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; ">
+        <span>pip install django</span>
+    </div>
+    <h4 class="text-center">Create the django project...</h4>
+    <div class="mx-auto" style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; ">
+        <span>django-admin startproject</span> <span style="background-color: yellow;">myproject</span>
+    </div>
+    <h4>6. Apply all django database migrations <span>(optional)</span></h4>
+    <h4>7. Go to the root directory.</h4>
+    <h4>8. Create your <span>react app</span> using the command - </h4>
+    <div class="mx-auto" style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; ">
+        <span>create-react-app</span> <span style="background-color: yellow;">app_name</span>
+    </div>
+    <h4>9. Remove the outer project directory.</h4>
+    <h4 class="text-center">Now your directory structure should be like : </h4>
+    <div class="mx-auto" style="border: 1px solid blue; background-color: white; width: 315px;">
+        <h4 style="color: red; margin-left: 10%;">Folder_name</h4>
+        <ul style="margin-left: 10%;">
+            <li>myproject</li>
+            <li>env</li>
+            <li>node_modules</li>
+            <li>public</li>
+            <li>src</li>
+            <li>.gitignore</li>
+            <li>db.sqlite3</li>
+            <li>manage.py</li>
+            <li>package-lock.json</li>
+            <li>package.json</li>
+        </ul>
+    </div>
+    <h4>10. Edit the myproject's <span>settings.py</span> file as given : </h4>
+    <div class="mx-auto d-block mt-3 pr-3 pt-3 special-width" style="border: 1px solid blue; background-color: white;">
+        <pre style="font-size: large; color: green;">
+        TEMPLATES = [
+            {
+                #...
+                'DIRS': [os.path.join(BASE_DIR, '<span style="background-color: yellow;">build</span>')],
+                'APP_DIRS': True,
+                #...
+            },
+        ]</pre>
+    </div>
+    <div class="mx-auto d-block mt-3 pr-3 pt-3 special-width" style="border: 1px solid blue; background-color: white;">
+        <pre style="font-size: large; color: green;">
+        STATIC_URL = '/static/'
+        
+        STATICFILES_DIRS = [
+            os.path.join(BASE_DIR, 'build/static'),
+        ]</pre>
+    </div>
+    <h4>11. Edit the myproject's <span>urls.py</span> file as given : </h4>
+    <div class="mx-auto d-block mt-3 pr-3 pt-3 special-width" style="border: 1px solid blue; background-color: white;">
+        <pre style="font-size: large; color: green;">
+            from django.contrib import admin
+            from django.urls import path, re_path
+            from django.views.generic import TemplateView
+            
+            urlpatterns = [
+                path('admin/', admin.site.urls),
+                re_path('.*', TemplateView.as_view(template_name='index.html'))
+            ]</pre>
+    </div>
+    <h4>12. Don't forget to mention the <span>virtualenv name</span> in <span>.gitignore</span> file.</h4>
+    <div class="mx-auto" style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px;">
+        <span style="background-color: yellow;">env</span><br>
+        <span>\node_modules</span>
+    </div>
+    <h4>13. That's it.... Now run the given command in the terminal - </h4>
+    <div class="mx-auto" style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; ">
+        <span>npm run build</span>
+    </div>
+    <h4>14. Then, run this command - </h4>
+    <div class="mx-auto" style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; ">
+        <span>python manage.py runserver</span>
+    </div>
+    <h4>15. And Boom...... You have got react application running in django server.</h4>
+    <h4>16. Everytime you make change in react app, run the two commands given above.</h4>
+</body>
+
+</html>
