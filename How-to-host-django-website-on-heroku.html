@@ -40,6 +40,13 @@
             color: green;
             font-size: large;
         }
+         
+        @media(max-width: 768px) {
+            .longer-div {
+                margin-left: 10px;
+                margin-right: 10px;
+            }
+        }
     </style>
 </head>
 
@@ -101,7 +108,7 @@
             <pre class="my-2">pip freeze > requirements.txt</pre></span>
     </div>
     <h2>14. Go to the root directory of your project and create a file 'Procfile'.</h2>
-    <div class="mx-3"
+    <div class="px-3 mx-auto longer-div"
         style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto; margin-top: 5px;">
         <span style="color: red;">Note : </span><span>Be sure the file 'Procfile' doesn't carry any extension.</span>
     </div>
@@ -109,7 +116,7 @@
     <div style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto;">
         <span>web: gunicorn your_project_name.wsgi</span>
     </div>
-    <div class="mx-3"
+    <div class="px-3 mx-auto longer-div"
         style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto; margin-top: 5px;">
         <span style="color: red;">Note : </span><span>Be sure the name of your project is correct otherwise it is not
             gonna be properly installed in heroku server.</span>
@@ -140,11 +147,11 @@
     <div style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto;">
         <span>heroku create your_web_name</span>
     </div>
-    <div class="mx-3"
+    <div class="px-3 mx-auto longer-div"
         style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto; margin-top: 5px;">
         <span style="color: red;">Note : </span><span>Be sure the name of your website is unique.</span>
     </div>
-    <div class="mx-3"
+    <div class="px-3 mx-auto longer-div"
         style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto; margin-top: 5px;">
         <span>Check if your website has been created successfully.</span>
     </div>
@@ -152,7 +159,7 @@
     <div style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto;">
         <span>git init</span>
     </div>
-    <div class="mx-3"
+    <div class="px-3 mx-auto longer-div"
         style="border: 1px solid blue; background-color: white; width:fit-content; padding: 10px; margin: auto; margin-top: 5px;">
         <span>Check if a git repository has been created successfully.</span>
     </div>
