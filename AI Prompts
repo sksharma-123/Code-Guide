@@ -1,0 +1,162 @@
+Prompt 1
+
+Keep ONE user-facing agent: mim-expert.
+
+Flow:
+Angular UI → Kiro CLI → mim-expert → internal workers/tools as needed → final grounded answer.
+
+mim-expert may internally route to:
+- KB Analysis
+- Deep Code Analysis
+- Defect Analysis
+- Fix Implementation
+
+Use only the minimum relevant sources required for each question.
+Do not always query KB first if the user's question is related to data analysis.
+
+Sources:
+- KB → project/business knowledge
+- GitLab → current code/config
+- OpenShift → runtime/routes/live service APIs
+- MongoDB → read-only persisted data
+- Splunk → logs/errors/correlation tracing
+
+Use MCP only as a tool/connector layer, preferably for MongoDB and Splunk; MCP is not an agent.
+
+Preserve existing GitLab/OpenShift integrations.
+All investigation access must remain read-only.
+
+First inspect the current project and preserve all working functionality.
+Do not modify code yet.
+
+
+------
+
+
+Prompt 2
+
+Implement persistent multi-chat sessions.
+
+Each chat must have a unique chatId and its own local storage containing:
+- exact transcript
+- rolling summary
+- evidence/decisions
+- related ChangeSet IDs
+
+Update the session after every user/agent turn.
+Keep unlimited history, but send Kiro only summary + relevant recent context.
+
+Browser close must NOT delete chats; mark them archived/inactive.
+Add chat history with reopen/continue support.
+Follow-up questions must understand previous chat context.
+
+
+----------
+
+
+Prompt 3
+
+Keep ONE user-facing agent: mim-expert.
+
+Internally route automatically to:
+- KB Analysis: KB only
+- Deep Code Analysis: KB + GitLab, other data only if needed
+- Defect Analysis: OpenShift/routes/APIs + Mongo + Splunk + GitLab + KB as required
+
+Do not show agent selection to users.
+Use only the minimum required sources per query.
+
+Keep existing GitLab/OpenShift integrations.
+Use MCP as a tool layer for MongoDB and Splunk where practical.
+All analysis integrations remain read-only.
+
+
+-----------
+
+
+Prompt 4
+
+Defect Analysis must determine WHY an issue happened; never assume every reported issue is a code defect.
+
+Classify the result as:
+CODE_DEFECT, EXPECTED_BEHAVIOR, DATA, CONFIG, ENVIRONMENT, DEPENDENCY, TRANSIENT or UNKNOWN.
+
+Show [Implement Fix] ONLY when:
+- a real code-level defect is confirmed
+- supporting evidence is sufficient
+- confidence is high enough
+
+For every other cause, explain the issue but never show Implement Fix.
+
+Return root cause, evidence, affected components, impact, confidence and sources.
+
+
+-------
+
+
+Prompt 5
+
+When the user clicks [Implement Fix], invoke a dedicated Fix Implementation worker.
+
+It must:
+- use the current chat/RCA/selected fix context
+- modify only required locally-cloned service repos
+- protect existing unrelated local changes
+- create a ChangeSet linked to chatId/fixId
+- record every changed repo/file and exact diff
+
+After implementation, show changed files row-wise in chat with clickable diffs.
+
+Then STOP.
+
+mim-expert must NOT build, test, commit or push.
+
+
+---------
+
+
+Prompt 6
+
+Create/upgrade the separate Git page to work from the ChangeSet created by mim-expert.
+
+Show:
+- affected repositories
+- changed files
+- exact diffs
+- current ChangeSet status
+
+All actions here are USER-triggered only:
+Review → Build → Test → Commit → Push.
+
+Show build/test output and failures clearly.
+Commit and Push must be separate explicit actions.
+
+mim-expert must never automatically perform these actions.
+
+
+
+----------
+
+
+
+Prompt 7
+
+Add these MIM Expert UI features:
+
+- Evidence/Sources Panel: show KB/GitLab/OpenShift/API/Mongo/Splunk evidence used.
+- Connection Health: show Kiro, GitLab, OpenShift, Mongo and Splunk status.
+- One-click HTML RCA Report: root cause, evidence, impact, fix, confidence, sources and timestamp.
+- Feedback: Helpful / Not Helpful + optional comment.
+- Negative corrections become reviewable KB Candidates; never auto-update KB.
+- Track ChangeSet/chat status and preserve an audit trail of analysis, fix and user actions.
+
+Preserve all existing functionality.
+
+
+
+
+
+
+
+
+
