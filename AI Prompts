@@ -153,6 +153,65 @@ Add these MIM Expert UI features:
 Preserve all existing functionality.
 
 
+-----------
+
+
+Prompt 8
+
+Add a Response Profile selector to MIM Expert with:
+Default, Developer, Tester, Business.
+
+Default must be selected automatically for every new chat.
+
+Store the selected profile per chat and pass it to mim-expert on every request.
+
+Profile affects response presentation only, NOT analysis, evidence, tool selection or root-cause accuracy:
+
+Default → balanced technical + functional response.
+Developer → code/classes/services/config/technical details.
+Tester → expected-vs-actual, repro/data/env, logs, test & regression scenarios.
+Business → functional flow, business impact and simple explanation with minimal code jargon.
+
+Allow profile switching anytime in a chat.
+
+Important: profile is NOT an authorization/security role.
+
+
+---------------
+
+
+Prompt 9
+
+Add two productivity features to MIM Expert:
+
+1. Chat Handoff Summary
+- Add a “Generate Handoff” action per chat.
+- Generate a concise shareable summary from the current chat/session:
+  issue, context, findings, root cause, evidence, affected services, current status, implemented ChangeSet if any, and pending next steps.
+- It must use existing chat memory/evidence and must NOT modify the investigation.
+- Allow copy/download of the handoff.
+
+2. Bookmarks / Saved Findings
+- Allow users to bookmark any useful answer, RCA, code finding or evidence item.
+- Save locally with title, chatId, timestamp, type and original content/source references.
+- Add a Saved Findings view with search, open and jump-back-to-original-chat support.
+- Deleting a bookmark must not delete the original chat/content.
+
+Preserve the existing multi-chat/session architecture and current functionality.
+
+
+-----------
+
+
+Create a one-click launcher, double clicking on which should open both UI and backend
+Modify Download button on chat responses
+
+
+
+
+
+
+
 
 
 
