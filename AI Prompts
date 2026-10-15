@@ -142,3 +142,92 @@ Refresh must reload only the currently selected repo’s branch, status, change 
 It must not hard-reload the browser.
 
 Preserve all existing Git safeguards and current user-triggered Build/Test/Commit/Push boundaries.
+
+
+
+
+----------------
+
+
+
+Implement an in-app version notification system for the locally-run MIM Expert app.
+
+First inspect the existing project/version/GitLab integration and reuse existing mechanisms.
+
+Requirements:
+
+1. Maintain one authoritative app version in the `mim-knowledge-base` repo.
+Reuse an existing version field if suitable; otherwise add a simple version manifest using semantic versions such as 1.4.0.
+
+2. On app startup, asynchronously compare:
+- currently running local version
+- latest version available on remote `main` of `mim-knowledge-base`
+
+Also allow a manual “Check for Updates” action.
+
+3. If the local version is current, do not show an intrusive notification.
+
+4. If a newer version exists, show a clear persistent but non-blocking notification/banner containing:
+- “New MIM Expert version available”
+- Current Version
+- Latest Version
+- optional release notes/summary if available
+- message: “Please pull the latest version of the `mim-knowledge-base` repo and restart the application.”
+
+5. DO NOT add Update Now, Pull, Checkout or any automatic Git action.
+The user will manually update the repo.
+
+6. Allow the notification to be dismissed for the current session, but show it again in a future session while the local version is still outdated.
+
+7. If GitLab/network/version check fails, normal app usage must continue; show only a non-blocking error/status.
+
+8. Keep version-check state separate from chat/session data and preserve all existing functionality.
+
+Goal:
+A new version is published to `mim-knowledge-base` → locally running instances detect it → users are notified to manually pull the latest repo version.
+
+
+
+
+--------------
+
+
+
+Fix the existing GitLab credential propagation bug.
+
+Current behavior:
+- User enters GitLab PAT in Configuration.
+- Existing “Connect & Test” verifies the token.
+- The token is saved.
+- But when mim-expert runs later, it reports that GitLab token is missing and cannot read GitLab repositories.
+
+Do NOT redesign the GitLab UI or replace the existing Connect & Test flow.
+
+Trace and fix the complete runtime credential path:
+
+Configuration saved PAT
+→ backend credential/config store
+→ GitLab integration
+→ mim-expert/Kiro runtime.
+
+Requirements:
+
+- The same saved PAT verified by “Connect & Test” must automatically be available to every mim-expert request.
+- Do not require the user to re-enter the token or manually set an environment variable for each session.
+- If Kiro runs as a child process, securely propagate the saved credential to the GitLab integration/runtime it uses.
+- Use one credential source of truth; do not create duplicate GitLab token storage.
+- Preserve the existing read-only GitLab access.
+- Never expose the raw PAT in prompts, chat, console, logs, API responses or UI.
+- Distinguish TOKEN_MISSING, TOKEN_INVALID/EXPIRED and GITLAB_UNREACHABLE correctly.
+- Do not report TOKEN_MISSING when a saved token actually exists.
+
+Verify end-to-end:
+Connect & Test succeeds → start mim-expert → ask it to inspect an allowed GitLab repository → it must successfully read the code using the same saved PAT.
+
+Fix the root cause, not just the displayed error.
+
+
+
+
+
+
