@@ -228,6 +228,72 @@ Fix the root cause, not just the displayed error.
 
 
 
+-------------
+
+
+Investigate and fix the Kiro CLI executable disappearing after login.
+
+Current bug:
+`kiro-cli.exe` exists and is configured correctly.
+User performs Kiro CLI login successfully.
+After some time, the configured `kiro-cli.exe` disappears from that path and MIM Expert can no longer use Kiro.
+
+Do NOT work around this by blindly recreating/downloading the exe.
+
+Trace the root cause end-to-end.
+
+Requirements:
+
+1. Inspect how the app currently:
+- stores the Kiro CLI path
+- launches login
+- launches normal Kiro requests
+- checks Kiro health.
+
+2. Reproduce and compare the CLI state/path before login, immediately after login, and after the failure occurs.
+
+Determine whether the executable is:
+- actually deleted
+- moved/renamed
+- replaced/upgraded
+- installed into another location
+- removed by an external/security process.
+
+3. Never delete, move, overwrite or clean up the configured Kiro executable from application code.
+
+4. After successful login, re-resolve the available Kiro CLI executable using the configured path plus normal system command discovery.
+If Kiro has legitimately moved/upgraded to another valid location, update the stored runtime path safely and re-run Kiro health.
+
+5. Before every Kiro execution, validate that the resolved executable exists.
+Do not keep using a stale cached path.
+
+6. If no valid executable can be found, report a clear diagnostic such as:
+KIRO_EXECUTABLE_MISSING
+KIRO_PATH_CHANGED
+KIRO_NOT_AUTHENTICATED
+or KIRO_EXTERNAL_REMOVAL_SUSPECTED.
+
+Do not falsely report an authentication failure when the actual problem is a missing executable.
+
+7. Add useful backend diagnostics for executable path resolution and lifecycle, but never log credentials/tokens.
+
+8. If evidence shows that Windows/VDI security or another external process is deleting/quarantining the executable, do not attempt to bypass it. Surface that clearly in Configuration/Connection Health so the user knows the issue is external.
+
+Verify:
+configured CLI → login succeeds → wait/recheck → executable remains resolvable → Connection Health stays healthy → mim-expert can execute Kiro requests.
+
+Fix the underlying executable/path lifecycle issue without breaking the existing login flow.
+
+
+
+
+
+
+
+
+
+
+
 
 
 
