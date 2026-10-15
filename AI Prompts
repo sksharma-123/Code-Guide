@@ -1,221 +1,144 @@
-Prompt 1
-
-Keep ONE user-facing agent: mim-expert.
-
-Flow:
-Angular UI → Kiro CLI → mim-expert → internal workers/tools as needed → final grounded answer.
-
-mim-expert may internally route to:
-- KB Analysis
-- Deep Code Analysis
-- Defect Analysis
-- Fix Implementation
-
-Use only the minimum relevant sources required for each question.
-Do not always query KB first if the user's question is related to data analysis.
-
-Sources:
-- KB → project/business knowledge
-- GitLab → current code/config
-- OpenShift → runtime/routes/live service APIs
-- MongoDB → read-only persisted data
-- Splunk → logs/errors/correlation tracing
-
-Use MCP only as a tool/connector layer, preferably for MongoDB and Splunk; MCP is not an agent.
-
-Preserve existing GitLab/OpenShift integrations.
-All investigation access must remain read-only.
-
-First inspect the current project and preserve all working functionality.
-Do not modify code yet.
-
-
-------
-
-
-Prompt 2
-
-Implement persistent multi-chat sessions.
-
-Each chat must have a unique chatId and its own local storage containing:
-- exact transcript
-- rolling summary
-- evidence/decisions
-- related ChangeSet IDs
-
-Update the session after every user/agent turn.
-Keep unlimited history, but send Kiro only summary + relevant recent context.
-
-Browser close must NOT delete chats; mark them archived/inactive.
-Add chat history with reopen/continue support.
-Follow-up questions must understand previous chat context.
-
-
-----------
-
-
-Prompt 3
-
-Keep ONE user-facing agent: mim-expert.
-
-Internally route automatically to:
-- KB Analysis: KB only
-- Deep Code Analysis: KB + GitLab, other data only if needed
-- Defect Analysis: OpenShift/routes/APIs + Mongo + Splunk + GitLab + KB as required
-
-Do not show agent selection to users.
-Use only the minimum required sources per query.
-
-Keep existing GitLab/OpenShift integrations.
-Use MCP as a tool layer for MongoDB and Splunk where practical.
-All analysis integrations remain read-only.
-
-
------------
-
-
-Prompt 4
-
-Defect Analysis must determine WHY an issue happened; never assume every reported issue is a code defect.
-
-Classify the result as:
-CODE_DEFECT, EXPECTED_BEHAVIOR, DATA, CONFIG, ENVIRONMENT, DEPENDENCY, TRANSIENT or UNKNOWN.
-
-Show [Implement Fix] ONLY when:
-- a real code-level defect is confirmed
-- supporting evidence is sufficient
-- confidence is high enough
-
-For every other cause, explain the issue but never show Implement Fix.
-
-Return root cause, evidence, affected components, impact, confidence and sources.
-
-
--------
-
-
-Prompt 5
-
-When the user clicks [Implement Fix], invoke a dedicated Fix Implementation worker.
-
-It must:
-- use the current chat/RCA/selected fix context
-- modify only required locally-cloned service repos
-- protect existing unrelated local changes
-- create a ChangeSet linked to chatId/fixId
-- record every changed repo/file and exact diff
-
-After implementation, show changed files row-wise in chat with clickable diffs.
-
-Then STOP.
-
-mim-expert must NOT build, test, commit or push.
-
-
----------
-
-
-Prompt 6
-
-Create/upgrade the separate Git page to work from the ChangeSet created by mim-expert.
-
-Show:
-- affected repositories
-- changed files
-- exact diffs
-- current ChangeSet status
-
-All actions here are USER-triggered only:
-Review → Build → Test → Commit → Push.
-
-Show build/test output and failures clearly.
-Commit and Push must be separate explicit actions.
-
-mim-expert must never automatically perform these actions.
-
-
-
-----------
-
-
-
-Prompt 7
-
-Add these MIM Expert UI features:
-
-- Evidence/Sources Panel: show KB/GitLab/OpenShift/API/Mongo/Splunk evidence used.
-- Connection Health: show Kiro, GitLab, OpenShift, Mongo and Splunk status.
-- One-click HTML RCA Report: root cause, evidence, impact, fix, confidence, sources and timestamp.
-- Feedback: Helpful / Not Helpful + optional comment.
-- Negative corrections become reviewable KB Candidates; never auto-update KB.
-- Track ChangeSet/chat status and preserve an audit trail of analysis, fix and user actions.
-
-Preserve all existing functionality.
-
-
------------
-
-
-Prompt 8
-
-Add a Response Profile selector to MIM Expert with:
-Default, Developer, Tester, Business.
-
-Default must be selected automatically for every new chat.
-
-Store the selected profile per chat and pass it to mim-expert on every request.
-
-Profile affects response presentation only, NOT analysis, evidence, tool selection or root-cause accuracy:
-
-Default → balanced technical + functional response.
-Developer → code/classes/services/config/technical details.
-Tester → expected-vs-actual, repro/data/env, logs, test & regression scenarios.
-Business → functional flow, business impact and simple explanation with minimal code jargon.
-
-Allow profile switching anytime in a chat.
-
-Important: profile is NOT an authorization/security role.
-
-
----------------
-
-
-Prompt 9
-
-Add two productivity features to MIM Expert:
-
-1. Chat Handoff Summary
-- Add a “Generate Handoff” action per chat.
-- Generate a concise shareable summary from the current chat/session:
-  issue, context, findings, root cause, evidence, affected services, current status, implemented ChangeSet if any, and pending next steps.
-- It must use existing chat memory/evidence and must NOT modify the investigation.
-- Allow copy/download of the handoff.
-
-2. Bookmarks / Saved Findings
-- Allow users to bookmark any useful answer, RCA, code finding or evidence item.
-- Save locally with title, chatId, timestamp, type and original content/source references.
-- Add a Saved Findings view with search, open and jump-back-to-original-chat support.
-- Deleting a bookmark must not delete the original chat/content.
-
-Preserve the existing multi-chat/session architecture and current functionality.
-
-
------------
-
-
-Create a one-click launcher, double clicking on which should open both UI and backend
-Modify Download button on chat responses
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Inspect the existing Angular + Node implementation first, then implement these changes end-to-end without breaking current functionality or creating duplicate services/components.
+
+1. Configuration – Save & Connect
+On Configuration > Machine Paths, add a clear “Save & Connect” button.
+- Detect unsaved changes and enable the button only when required.
+- On click: validate inputs → save/persist configuration → show Saving/Saved state → automatically re-run connection health checks.
+- Do not run health checks if save fails.
+- Show useful field-level errors such as path not found/invalid executable where possible.
+- Show final connection status after re-check.
+- Keep the existing manual Re-check Connections action.
+
+2. Background Task Notifications
+For every user-triggered long-running backend task such as Build/Test/Git commands:
+- Show immediate toastr when task starts.
+- Include action, repository/project, status and useful details.
+- Show completion/failure toastr with duration.
+- Failure notification should allow the user to open/view relevant console output.
+- Notifications must still appear if the user navigates to another page while the task runs.
+
+3. Console Output UX
+Improve the existing console panel for readability and live execution feedback.
+For each running command show:
+- project/repo
+- command/action
+- Starting → Running → Success/Failed
+- start time and elapsed time
+- readable streamed output
+- clear error/failure section
+- auto-scroll while running, without forcing it if user manually scrolls up.
+
+UI must react immediately when an action is clicked; never leave a 3–4 second blank/dead state.
+Show a progress/loading indicator from the moment execution starts.
+Use real percentage only when actual progress is known; otherwise use an indeterminate progress bar/spinner. Never fake percentages.
+
+4. Cancel Active Chat Request
+While mim-expert is processing a chat query, replace/augment Send with a visible Stop/Cancel action.
+On cancel:
+- abort the actual current backend/Kiro request and related processing where safely possible, not only the frontend display
+- scope cancellation to that exact chat/request
+- do not affect requests/tasks running in other chats
+- clear loading state immediately
+- mark the response/request as Cancelled, not Failed
+- keep any already-received partial content if useful
+- keep session/history consistent
+- allow the user to submit another query immediately in the same chat.
+
+Use the existing task/session/state architecture wherever possible.
+Do not add mock behavior or frontend-only fixes.
+Ensure frontend and backend states remain synchronized.
+
+
+
+
+-----------------
+
+
+
+
+Inspect and reuse the existing Git/dashboard/chat/workflow architecture. Implement all changes end-to-end without breaking existing actions.
+
+1. Dashboard – Targeted Repository Refresh
+Currently a Git action on one repo refreshes all repos. Fix this.
+
+For a single-repo Git action:
+- refresh only the affected repo if the action can change its state
+- do not reload/re-render other repository rows
+- do not refresh after read-only actions such as Status, Log/History, Diff, branch info or remote info
+- refresh after successful state-changing actions such as Pull, Push, Commit, Checkout/branch switch, Merge, Reset/Revert, Stash Apply/Pop or working-tree changes
+- if an action fails without changing state, avoid unnecessary refresh.
+
+Use repo-scoped refresh/update logic rather than refreshAll.
+
+2. “Sync All to Main” Dashboard Action
+Add a button immediately left of the “Filter repos” input.
+
+It must sync every available MIM service repo EXCEPT `mim-knowledge-base`.
+
+On click:
+- prevent duplicate simultaneous sync runs
+- inspect every target repo
+- detect current branch and local changes
+- safely stash/shelve dirty changes, including relevant untracked files
+- assign temporary stashes to the sync operation so they can be tracked safely
+- checkout `main`
+- pull latest remote `main` using fast-forward-only behavior; never silently merge/rebase
+- restore that repo’s previously shelved changes onto the updated main
+- continue processing remaining repos even if one repo fails
+- never discard local changes.
+
+If a repo has an unfinished merge/rebase/cherry-pick or another unsafe Git state, skip it and mark it Needs Attention rather than modifying it automatically.
+If stash restore causes conflicts, preserve the stash/change safely and mark that repo Needs Attention.
+
+Show live console progress throughout:
+repo N/total, current repo, stash/checkout/pull/restore steps and result.
+Because total repo count is known, show genuine overall progress.
+Use toastr lifecycle notifications as implemented in Stage 1.
+
+After the entire operation finishes:
+- show summary: synced / skipped / failed / needs-attention repos
+- perform ONE dashboard refresh at the end
+- all successfully synced repos should be on latest local `main` with their previous local modifications restored.
+
+3. Fix Chat “Create Workflow”
+Properly analyze and repair the existing Create Workflow feature.
+
+When clicked:
+- use the ENTIRE current chat/session, not only the latest message
+- consider transcript, session summary, important decisions/evidence where available
+- identify the real current objective
+- remove repetition/conversational noise
+- exclude rejected or superseded approaches
+- prioritize the latest agreed decisions
+- preserve important technical details, constraints, service names, commands and safeguards.
+
+Generate a summarized but comprehensive actionable workflow with:
+Title
+Objective
+Prerequisites/Context
+Ordered Steps
+Decision/Validation Points
+Expected Result
+Important Constraints/Notes
+
+If the chat contains unrelated topics, include only the relevant workflow context.
+Allow review/edit after generation.
+Use the existing workflow storage/model if one already exists; do not create a parallel duplicate system.
+Creating a workflow must not modify the original chat.
+
+4. Manage Project – Reactive Repo Switching
+Fix Manage Project so it follows the globally selected repository.
+
+When the user changes the repo from the top dropdown while already on Manage Project:
+- detect selectedRepo change immediately
+- clear stale repo state/actions
+- show loading state
+- load and render the newly selected repo without browser/hard reload
+- temporarily prevent actions against the old repo
+- show a clear error if the new repo cannot be loaded instead of leaving old data visible.
+
+Also add a Refresh button on Manage Project.
+Refresh must reload only the currently selected repo’s branch, status, change count, repo-dependent actions and relevant metadata.
+It must not hard-reload the browser.
+
+Preserve all existing Git safeguards and current user-triggered Build/Test/Commit/Push boundaries.
