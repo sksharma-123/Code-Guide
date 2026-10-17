@@ -467,6 +467,119 @@ Every user should discover the power of MIM Expert from THEIR role’s perspecti
 
 
 
+--------------------------
+
+
+
+Upgrade the existing MIM Expert Global Command Palette into a **Smart Universal Search & Command Center**, with ZERO Kiro/AI credit usage for normal searches and commands.
+
+First inspect the existing Angular/Node Command Palette, global repo selector, navigation, backend actions, KB, Web IDE, DB Workbench, Service 360 and API Explorer. Reuse existing architecture; do not create duplicate search components or integrations.
+
+### 1. Unified Search
+Enhance the existing top search bar and Ctrl+K palette to search across:
+- Pages and available actions
+- MIM services/repositories
+- KB documents
+- Local code files/classes/methods
+- Indexed APIs/endpoints
+- DB collection metadata
+- Saved findings, workflows and recent chats
+
+Show categorized, ranked results with relevant icons, descriptions and direct navigation/actions.
+
+Preserve existing Favorites, keyboard navigation, shortcuts and styling.
+
+### 2. Zero-AI Intent Recognition
+Implement a lightweight deterministic intent resolver using keywords, aliases, patterns, fuzzy matching and existing project metadata.
+
+Examples:
+- "open participant service" → Service 360
+- "build reporting" → Build action for reporting repo
+- "show APIs of rebalancer" → API Explorer
+- "latest 10 records for PIN 123" → DB Workbench with prefilled verified query context
+- "find validateParticipant" → Code search/Web IDE
+- "check service health" → OpenShift runtime view
+
+Do not invoke Kiro, LLMs, embedding APIs or external paid AI for search, suggestions, intent routing or deterministic actions.
+
+Never invent a service, API, collection or command when no verified match exists.
+
+### 3. Context Awareness
+Use the globally selected repo/service, current page and available context to improve matching.
+
+Explicitly named services override the selected repo.
+
+Preserve the recognized intent, parameters and selected entity when navigating to another page so the user never has to re-enter the same query.
+
+### 4. Local Unified Search Index
+Build/reuse a lightweight local searchable index covering available repositories, KB, code symbols, API metadata and application entities.
+
+- No AI-generated embeddings.
+- Support partial/fuzzy matches and aliases.
+- Incrementally update after relevant repo clone/pull, KB updates and metadata changes.
+- Use background indexing without blocking the UI.
+- Show indexing/loading states and handle unavailable sources gracefully.
+- Avoid repeatedly scanning all repositories for every keystroke.
+
+### 5. Actions and Navigation
+Results must perform real actions using existing app mechanisms.
+
+- Navigation/search/view actions execute directly.
+- Build/Test/Git modifications/API execution require explicit user action and existing validation/confirmation.
+- Never automatically execute destructive/state-changing commands from typed search text.
+- Maintain repo isolation and existing security policies.
+
+### 6. AI Fallback — Explicit Only
+If no confident deterministic match exists, show relevant suggestions and an optional **“Ask MIM Expert”** action.
+
+Only clicking this action may invoke Kiro for complex reasoning.
+
+Normal search must never silently trigger AI or consume Kiro credits.
+
+Clearly distinguish:
+- Local Search — No AI
+- Ask MIM Expert — Uses AI
+
+### 7. UX & Performance
+- Instant autocomplete and suggestions.
+- Debounced search where appropriate.
+- Keyboard navigation: Ctrl+K, arrows, Enter, Esc.
+- Highlight matching text.
+- Recent searches and frequently used actions.
+- Empty, loading, indexing and error states.
+- Responsive UI consistent with existing application.
+- Keep local operations fast and avoid unnecessary API calls.
+
+### 8. Validation
+Verify end-to-end with actual MIM repositories and existing app data.
+
+Test:
+- navigation and service search
+- local code/KB/API search
+- natural-language command patterns
+- selected-repo context
+- correct action execution
+- index refresh after repository changes
+- no-match AI fallback
+- zero Kiro calls during normal search.
+
+Preserve all existing functionality.
+
+**TARGET:** One intelligent global search bar for discovering, navigating and operating the MIM ecosystem, with deterministic execution, minimal latency and zero AI-credit consumption unless the user explicitly chooses MIM Expert.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
