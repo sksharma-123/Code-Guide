@@ -205,6 +205,112 @@ Service 360 should become the central entry point for understanding and working 
 -----------------
 
 
+
+Implement a complete **AI-powered API Explorer** in the existing MIM Expert Angular + Node application.
+
+First inspect and reuse existing mim-expert/Kiro CLI, GitLab, OpenShift, KB, Service 360, profiles, visualization and configuration integrations. Implement end-to-end without duplicating existing services or breaking functionality.
+
+**GOAL:** Users describe what data they need in natural language. AI discovers and ranks relevant MIM APIs, prefills parameters, and lets users execute selected APIs directly in the UI.
+
+### 1. API Explorer UI
+Create a dedicated page with:
+- Prominent “Ask Your APIs” natural-language search bar.
+- AI Discovery (default) and Manual Explorer modes.
+- Ranked API suggestions showing service, method, endpoint, purpose, match confidence and source.
+- Expandable request builder: URL, headers, path/query parameters and JSON body.
+- Execute API button, request preview and execution status.
+- Response views: JSON, Table, Tree and intelligent Charts.
+- API history, saved/favorite requests and execution details.
+
+### 2. Intelligent API Discovery
+For queries like:
+- "Get latest status of PIN 12345"
+- "Find participant details"
+- "Show transaction history for this PIN"
+
+Use mim-expert to identify relevant APIs through:
+- OpenAPI/Swagger specs when available.
+- GitLab Java controllers, mappings and DTOs.
+- MIM Knowledge Base/business rules.
+- Existing OpenShift integration for deployed routes/base URLs.
+
+Important: **OpenShift routes identify service hosts, not necessarily individual endpoints.** Combine the sources above; do not guess or fabricate APIs.
+
+Rank all relevant discovered APIs and explain which data each returns. Clearly distinguish verified endpoints from uncertain matches. Do not automatically execute APIs during discovery.
+
+### 3. AI Parameter Autofill
+Extract PIN, IDs, dates, statuses and other parameters from the user's request.
+
+Automatically map them to verified API parameters/body schemas. Reuse selected service and previous API context for follow-up queries.
+
+Show the complete editable request before execution. If required information is missing, identify it clearly.
+
+### 4. Controlled API Execution
+User explicitly selects and executes an API.
+
+Flow:
+Natural language → AI discovery → structured API request → backend validation → user execution → response.
+
+Use the existing Node backend to call APIs through the configured OpenShift environment. Reuse existing service authentication.
+
+Never let AI execute arbitrary URLs/commands. Enforce allowed hosts/routes, method and endpoint permissions, authentication, timeouts and response-size limits server-side.
+
+Initially execute only verified, permitted read-only operations. Do not assume GET is automatically safe or POST is automatically unsafe. Block unknown or state-changing operations until explicitly authorized.
+
+Never expose credentials/tokens.
+
+### 5. AI Multi-API Chaining
+If a request requires multiple APIs, AI should propose an ordered execution plan showing:
+- required APIs
+- purpose of each call
+- parameter dependencies
+- expected results.
+
+Example:
+"Get participant details, latest status and event history for PIN 12345."
+
+Show the plan and execute only after user approval, using permitted read-only endpoints. Pass outputs between steps where required and combine responses into one readable result.
+
+### 6. Response Intelligence
+Provide:
+- formatted JSON, searchable tables and expandable trees
+- automatic suitable charts/timelines using existing visualization libraries
+- HTTP status, response time and useful error details
+- pagination for large results
+- copy/export where permitted.
+
+Add **“Ask MIM Expert about this Response”** for selected fields, rows or entire bounded results.
+
+Pass only relevant response context so mim-expert can correlate with KB, GitLab, MongoDB or OpenShift when needed.
+
+### 7. App Integration
+- Reuse globally selected service/context.
+- Service 360 → View APIs opens Explorer prefiltered to that service.
+- Support broader cross-service discovery when requested.
+- Preserve context on navigation.
+- Reuse Default/Developer/Tester/Business response profiles for relevant presentation.
+- Keep normal API execution deterministic; use Kiro primarily for discovery, interpretation and explanation.
+
+### 8. UX and Reliability
+Show immediate progress:
+Discovering → Ranking → Preparing → Executing → Completed/Failed.
+
+Handle unavailable routes, missing API specs, authorization failures, timeouts, empty results and invalid parameters gracefully.
+
+Never display fabricated responses or silently call an alternative endpoint.
+
+Preserve all existing integrations and functionality. Validate the complete flow with actual accessible MIM endpoints rather than mock-only implementations.
+
+**TARGET EXPERIENCE:**
+User asks in normal language → AI discovers possible APIs → user selects one → parameters autofill → user executes → readable visual response → optional AI analysis.
+
+Make this a polished, production-conscious, AI-first alternative to manually finding and calling APIs through Swagger/Postman.
+
+
+
+-----------------
+
+
 Enhance GitLab setup and repository cloning support.
 
 First inspect the existing Configuration, GitLab integration, Manage Project flow and Git actions. Reuse existing services/state; do not create duplicate auth systems.
