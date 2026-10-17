@@ -1,310 +1,392 @@
-Implement a new AI-powered “Service 360°” page as the central hub for every MIM service.
+Implement a complete **MIM Test Evidence Studio** in the existing Angular + Node MIM Expert application.
 
-First inspect the existing Angular/Node architecture, repo selector, GitLab/OpenShift/Mongo/Splunk integrations, Web IDE, user profiles and mim-expert. Reuse existing services/state; do not create duplicate integration layers.
+First inspect the existing chat/session memory, RCA, ChangeSets, user profiles, configuration, Windows launcher, IExpress packaging and Kiro CLI integration. Reuse existing components and storage wherever possible. Implement everything end-to-end without breaking existing functionality.
 
-GOAL:
-When a user opens any MIM service, they should understand, investigate and navigate almost everything about that service from one page without switching to GitLab, OpenShift, Splunk, DB tools or IDE manually.
+**GOAL:** Developers and QA perform manual testing, capture screenshots using a floating Windows desktop button, and generate professional testing documents with AI-generated step names and descriptions.
 
-1. Service Selection
+### 1. Generate Testing Handoff from MIM Expert Chat
 
-Reuse the existing globally selected repo/service.
+Add **Generate Testing Handoff** to the existing main chat.
 
-When selected service changes:
-→ Service 360 must automatically refresh to that service
-→ clear stale data
-→ show loading states
-→ never mix data from two services.
+Using the relevant complete chat context, RCA, implementation details, ChangeSet and final decisions, generate ONE comprehensive QA-oriented handoff containing:
 
-Exclude `mim-knowledge-base` from normal MIM business-service analysis where appropriate.
+- Issue or new implementation summary
+- Root cause, if applicable
+- Implemented changes and affected services
+- Expected functionality/behavior
+- Relevant build/commit references when available
+- Suggested positive, negative, boundary and regression scenarios
+- Preconditions, test data and expected results
+- Important validation points
 
-2. 360 Overview
+Use only verified information; flag uncertain expectations for review.
 
-Show a clean summarized overview containing available data such as:
+Allow reviewing/editing the handoff and export it as a portable versioned JSON file. Exclude credentials, secrets and unnecessary sensitive data.
 
-- service purpose/business responsibility
-- local repo availability/path
-- Git branch/status
-- GitLab repo
-- deployed/runtime status
-- OpenShift route/pods
-- deployed version/image
-- important APIs
-- Mongo databases/collections used
-- Splunk/log availability
-- upstream/downstream dependencies
-- recent relevant commits/changes
-- build/test status where available.
+Both Developer and QA must be able to import the SAME handoff into their separate local MIM Expert installations. No central server or shared database is required.
 
-Load each section independently so one unavailable integration does not break the entire page.
+### 2. Test Evidence Studio
 
-Show source/freshness information where useful.
+Create a dedicated page with persistent local testing sessions.
 
-3. AI-First Service Query
+On importing a handoff:
+- Create an independent editable testing session.
+- Load all suggested scenarios.
+- Allow selecting/deselecting, adding, editing, deleting and reordering scenarios.
+- Allow creating entirely new custom scenarios.
+- Preserve the original handoff unchanged.
+- Support independent Developer/QA testing and reports.
 
-Add a prominent natural-language input:
+Example: A handoff contains 10 scenarios. Developer may test only 2; QA may test 5, including additional custom scenarios.
 
-“Ask anything about this service…”
+Each scenario must support:
+NOT_STARTED → IN_PROGRESS → PAUSED/RESUMED → REVIEW → COMPLETED.
+
+Record Pass/Fail/Blocked, actual results and tester notes separately from execution state.
+
+Only ONE scenario may actively capture screenshots at a time.
+
+### 3. Floating Windows Screenshot Capture
+
+When the user clicks **Start Testing** on a scenario:
+
+- Launch a small always-on-top floating screenshot widget visible across the entire Windows VDI, even when another application/window is active.
+- Show the active scenario name and Capture/Pause controls.
+- Keep it visible while testing is active.
+- Hide/disable it when paused or capture is finished.
+- Restore it when testing resumes.
+
+Clicking **Capture Screenshot** must:
+- Capture the full VDI desktop/selected display by default, with an optional active-window mode.
+- Temporarily hide the floating widget from the captured image.
+- Automatically save the screenshot locally against the currently active session/scenario.
+- Preserve chronological order, timestamp and screenshot ID.
+- Immediately update the scenario evidence count.
+- Keep the widget available for repeated captures.
+
+No manual screenshot upload or attachment should be required during normal capture.
+
+**Technical requirement:** Since the existing app runs in a browser, implement a lightweight Windows-native floating capture helper using available Windows/.NET/PowerShell capabilities. Bundle it within the existing installer/portable build.
+
+Do NOT require Electron, external software installation, administrator privileges or changes to corporate security policies. Verify VDI compatibility. If desktop capture is restricted, show a clear error and provide clipboard-paste/manual-upload fallback.
+
+Capture only on explicit user action; never record the desktop continuously.
+
+### 4. Powerful Screenshot Editor
+
+Integrate a professional npm-based image editor into the Angular UI.
+
+Prefer **Filerobot Image Editor**, subject to compatibility and licensing checks; use another suitable maintained package if necessary.
+
+Required capabilities:
+- Crop/rotate
+- Arrows, rectangles, shapes and highlights
+- Text annotations and numbering
+- Blur and irreversible sensitive-data redaction
+- Undo/redo
+- Zoom
+- Screenshot reorder/delete/replace
+- Editable captions
+
+Save edited copies without destroying original evidence. Ensure exported redacted images cannot reveal underlying sensitive pixels.
+
+Allow users to finish capturing, return to MIM Expert, edit all screenshots and then finalize the scenario.
+
+### 5. AI Screenshot-to-Test-Step Generation
+
+This is the MOST IMPORTANT capability.
+
+**Each screenshot represents exactly ONE testing step.**
 
 Examples:
-- “What does this service do?”
-- “Which APIs does it expose?”
-- “What services depend on it?”
-- “Which collections does it use?”
-- “Show recent errors.”
-- “Where is PIN validation implemented?”
-- “What changed recently?”
-- “Is this service healthy?”
-- “What can break if I change this DTO?”
+4 screenshots → 4 steps.
+10 screenshots → 10 steps.
 
-Automatically provide the currently selected service as context.
+After screenshot capture/editing, provide **Generate Steps with AI**.
 
-mim-expert must dynamically use only required sources:
-KB, GitLab, OpenShift/API, MongoDB, Splunk or existing project metadata.
+Use the imported handoff, scenario objective, expected behavior, user notes and ordered screenshot images as context.
 
-Do not query every source for every question.
+AI must visually analyze each screenshot and generate:
 
-4. Quick Actions
+- Step number
+- Meaningful professional step name
+- Concise description of the visible action/result
+- Exact corresponding screenshot
 
-Provide contextual actions such as:
+Examples:
 
-- Open in Web IDE
-- View Code
-- View Git Changes
-- View APIs
-- View Logs
-- Open DB Workbench
-- View Runtime
-- View Dependencies
-- View Recent Changes
-- Build
-- Test
-- Ask MIM Expert
+Screenshot showing PIN search → "Search Participant by PIN"
 
-Only show actions actually available for the selected service.
+Screenshot showing participant details → "Verify Participant Details"
 
-Reuse existing pages/tools instead of duplicating their functionality.
-Deep-link them with current service context already selected.
+Screenshot showing final status → "Verify PIN Processing Status"
 
-5. Dependency / Impact View
+If screenshot meaning is unclear, use a neutral professional name such as "Verify Application Screen State" and a factual, non-speculative description.
 
-Add an interactive service dependency section.
+Never skip, merge, fabricate or reorder steps. Preserve strict screenshot-to-step mapping.
+
+Allow users to edit generated names/descriptions manually.
+
+Verify whether the existing Kiro CLI/runtime supports actual image understanding. Use approved multimodal capabilities when available. If unavailable, transparently fall back to generic step names and editable descriptions; never falsely claim screenshots were visually analyzed.
+
+Optimize credits by batching screenshot analysis per scenario, reusing context and regenerating only changed steps when possible.
+
+### 6. Scenario Review and Completion
+
+After AI step generation:
+- Show every step with its screenshot and editable description.
+- Allow editing/reordering/deleting screenshots and associated steps.
+- Allow adding actual results and comments.
+- User manually assigns Pass/Fail/Blocked.
+- Mark the scenario Completed only after user review.
+
+Never let AI assume a scenario passed merely from screenshots.
+
+Persist all changes automatically and support pause/resume, application restart and crash recovery.
+
+### 7. Professional Testing Document Generation
+
+Add **Generate Testing Document**.
+
+Produce editable Word (.docx), PDF and HTML preview using reusable professional templates.
+
+Include:
+- Test session title
+- Issue/implementation summary
+- RCA/fix context where relevant
+- Tester role and available version/build details
+- Selected/completed scenarios
+- Scenario objective, expected/actual results and status
+- AI-generated step names and descriptions
+- Each screenshot placed directly beneath its corresponding step
+- Tester comments and overall execution summary
+- Pass/Fail/Blocked counts
+
+Generate only from the user's current testing session, not every original handoff scenario.
+
+Provide document preview/editing before export. Never invent missing results or unsupported conclusions.
+
+### 8. Persistence, Security and Token Optimization
+
+- Store sessions, screenshots, edited images and reports in persistent per-user storage outside replaceable application binaries.
+- Preserve everything across future app upgrades.
+- Validate imported handoff files and prevent unsafe file/path access.
+- Never expose credentials or silently upload screenshots.
+- Respect corporate VDI capture and data-handling restrictions.
+- Use deterministic code for capture, image editing, storage, session management and DOCX/PDF generation.
+- Use Kiro only for handoff/scenario generation and screenshot understanding when requested.
+- Do not invoke Kiro during every capture or ordinary document export.
+
+### 9. End-to-End Validation
+
+Verify the complete workflow:
+
+Original MIM Chat → Generate QA Handoff → Export JSON → Import into Developer/QA installation → Select/Edit/Add scenarios → Start Testing → Floating Windows Capture → Capture multiple screenshots → Pause/Resume → Edit screenshots → AI generates exactly one step per screenshot → Review → Mark Pass/Fail → Complete → Generate DOCX/PDF.
+
+Ensure the floating helper, Node backend, Angular UI and existing IExpress production/portable packaging work together.
+
+Do not create mock-only implementations or duplicate existing functionality.
+
+**FINAL TARGET:** Users perform manual testing normally while MIM Expert automatically collects their evidence, understands the screenshot sequence, names/describes testing steps and creates a professional testing document with minimum manual effort and optimized AI-credit usage.
+
+
+
+------------------
+
+
+
+Upgrade the existing **MIM Expert Windows application experience, launcher and version-update system** without changing its Angular + Node architecture.
+
+First inspect the complete existing implementation: `BUILD_EXE.cmd`, `build-installer.ps1`, `installer/MIMCommandPanel.iss`, VBS launcher, MIM Command Panel, bundled Node runtime, `version.json`, IExpress installer, portable ZIP, configuration storage and existing update checks.
+
+Implement end-to-end. Reuse working components and preserve all existing functionality.
+
+### 1. Windows Desktop App Experience
+
+Replace the normal browser-tab launch experience with a dedicated Windows-style MIM Expert application window using **Microsoft Edge App Mode**.
+
+Expected behavior:
+
+User double-clicks MIM Expert desktop shortcut → backend starts silently → health check completes → dedicated MIM Expert window opens.
+
+Requirements:
+- Use installed Edge with `--app=<local-url>`.
+- No normal browser tabs or address bar.
+- Dedicated MIM Expert app name, icon and taskbar experience.
+- Preserve existing Angular UI, Node backend and Web IDE.
+- Preserve the ability to open the UI in a normal browser as fallback.
+- Do NOT migrate to Electron or introduce a new desktop framework.
+- If Edge App Mode is restricted/unavailable, gracefully use the existing browser mode.
+- Keep local backend bound to loopback by default without breaking any explicitly configured shared-host functionality.
+
+### 2. Silent Launcher & Backend Lifecycle
+
+Normal users must NOT see the existing black VBS/PowerShell Command Panel.
+
+Create/reuse a lightweight Windows launcher that:
+- Starts the bundled Node backend invisibly.
+- Serves the production Angular build through the existing backend where practical.
+- Waits for a real backend health check before opening the UI.
+- Prevents duplicate application/backend instances and port conflicts.
+- Reuses an already-running healthy instance.
+- Handles startup failures with an independent Windows error dialog.
+- Provides Retry, View Logs and Diagnostics actions.
+- Safely manages shutdown without killing unrelated Node or Edge processes.
+- Preserves active tasks and warns before unsafe shutdown.
+
+Keep the existing Command Panel accessible through an optional Developer/Debug Mode.
+
+### 3. Backend Logging & Diagnostics
+
+Because the backend runs silently, persist stdout/stderr and application errors into timestamped, rotating local log files.
+
+Extend/reuse existing Diagnostics/System Info to show:
+- Backend status
+- Current application version
+- Configured port
+- Recent logs
+- View/Open Log File
+- Restart Backend where safe
+
+Diagnostics for startup failures must remain accessible even when Angular/backend cannot start.
+
+Never expose credentials, PATs, tokens or secrets in logs.
+
+### 4. Preserve Existing Build & Installer
+
+Continue using the existing corporate-compatible **IExpress packaging**.
+
+Do NOT require Inno Setup, Electron, administrator rights or externally installed software.
+
+Preserve:
+- Existing FULL/FAST/STAGE build options
+- Angular production build
+- Bundled Node executable/dependencies
+- `MIMCommandPanel-Setup.exe`
+- `MIMCommandPanel-portable.zip`
+- Existing Windows installation/shortcut behavior
+
+Update packaging to include the desktop launcher, updater and necessary resources.
+
+Use the portable ZIP as the versioned application update package after validating its structure and compatibility.
+
+### 5. Persistent User Data
+
+Separate replaceable application files from persistent per-user data.
+
+Preserve across ALL updates:
+- Configuration and protected secrets
+- GitLab PAT/SSH settings
+- MongoDB configuration
+- Kiro CLI settings
+- Chat history/session memory
+- Personal KB, workflows and saved findings
+- QA evidence/screenshots
+- User profiles/preferences
+- Configured local repository paths and repositories
+
+Use suitable Windows per-user storage, respecting VDI profile persistence.
+
+Safely migrate existing installations with backups, validation and recovery.
+
+Never replace, reset or silently delete personal data during updates.
+
+### 6. One-Click Automatic Update System
+
+Implement a native launcher-managed updater that works independently of Angular/backend.
+
+Use `version.json` as the installed-version source and compare it with a trusted published release manifest.
+
+Prefer an existing approved internal release location such as GitLab Releases or Confluence, depending on available authenticated API/download access.
+
+Do NOT use GitLab `main` commits as the installer-release version.
+
+Each release should publish:
+- Version
+- Release notes
+- Portable ZIP
+- Integrity checksum
+- Trusted download metadata
+
+On launch and through a manual Check for Updates action, detect new published versions without Kiro calls.
 
 Show:
-- upstream dependencies
-- downstream consumers
-- related APIs/events where discoverable.
+“New MIM Expert Version Available”
+Current Version → Latest Version
+Release notes
+[Update] [Later]
 
-Support natural-language impact questions such as:
-“If this API/DTO/event changes, what can be impacted?”
+Provide Update/Check for Updates access within the running app and through a launcher-controlled interface when the backend is unavailable.
 
-Use current code/KB/dependency evidence and clearly separate:
-confirmed dependencies
-vs
-possible/inferred impact.
+### 7. Safe Update Execution
 
-Allow clicking a dependency to open its Service 360 page.
+When user clicks **Update**, automatically:
 
-6. Runtime & Release Intelligence
+1. Check for unsafe active tasks and block/defer updates when necessary.
+2. Download the approved release package securely.
+3. Validate package authenticity, checksum, version and compatibility.
+4. Stage and extract the update into a separate version directory.
+5. Back up persistent configuration/data where migration requires it.
+6. Gracefully stop only MIM Expert-managed processes.
+7. Switch to the new application version without overwriting persistent data.
+8. Run any required safe/versioned data migrations.
+9. Restart the backend and application window.
+10. Verify health and display Update Successful.
 
-Where data is available, correlate:
+Show genuine progress and detailed errors throughout.
 
-OpenShift deployed service
-→ deployed image/version
-→ Git tag/commit
-→ recent code changes.
+Use a stable external updater/launcher so running application files are never overwritten unsafely.
 
-Allow questions such as:
-“Did this issue start after the latest deployment?”
-“What changed in the currently deployed release?”
+If installation/startup fails, automatically restore the previous working application version and report the failure without losing user data.
 
-Do not claim correlation when version mapping cannot be confirmed.
+Never silently downgrade or execute unsigned/untrusted update code.
 
-7. Logs / DB / API Context
+Do not scrape SSO cookies, bypass corporate policies or store credentials in release packages. If authenticated programmatic download is unsupported, report the blocker rather than simulating automatic updates.
 
-Service 360 should not duplicate full tooling.
+### 8. Existing Installation Migration
 
-Instead show useful summaries/previews and provide deep links:
+Support a safe one-time migration from existing IExpress installations to the new launcher/updater layout.
 
-Logs
-→ recent errors/counts + Open Logs Explorer
+Preserve installed settings, data, shortcuts and repositories.
 
-DB
-→ related databases/collections + Open DB Workbench
+If an older installed release has no updater/bootstrap capability, provide a clearly documented one-time upgrade path; subsequent releases must support one-click updates.
 
-APIs
-→ important endpoints + Open API Explorer
+### 9. Versioning & Build Integration
 
-Code
-→ relevant modules/classes + Open Web IDE.
+Keep the installed frontend, backend, launcher and updater version metadata consistent.
 
-Pass selected service context automatically.
+Automate generation of the portable update artifact and release manifest as part of the existing build process.
 
-8. Profile Awareness
+Do not bundle machine-specific configuration or credentials.
 
-Reuse existing profiles:
-Default, Developer, Tester, Business.
+Prevent stale Angular assets after upgrades.
 
-Developer:
-emphasize code, dependencies, Git, APIs, DB, runtime, build/test.
+### 10. End-to-End Verification
 
-Tester:
-emphasize APIs, runtime, logs, DB state, expected behavior, test/regression information.
+Test on a corporate-compatible Windows environment:
 
-Business:
-emphasize service purpose, business flow, impact, dependencies and health.
-Hide low-level developer-only details unless explicitly requested.
+- Fresh installation
+- Existing installation migration
+- Silent backend startup
+- Edge standalone app window
+- Duplicate launch prevention
+- Backend crash and log recovery
+- Update availability detection
+- One-click update from an older version
+- Complete preservation of configuration/chats/repos
+- Interrupted/failed update rollback
+- Browser fallback
+- Offline/network-failure behavior
+- Existing Git, Kiro, Mongo, OpenShift and Web IDE functionality
 
-Default:
-balanced view.
+Do not create mock-only behavior or replace working integrations.
 
-Profile changes must update presentation immediately without changing underlying evidence.
+**FINAL TARGET:**
 
-9. “Ask About This”
+Install MIM Expert once → launch it like a Windows desktop application → backend runs silently → user works in a dedicated Edge app window → new releases are detected automatically → user clicks Update → application safely upgrades and restarts with all existing configuration and data preserved.
 
-Make major Service 360 elements context-aware.
+Implement this using the existing Angular + Node + VBS/PowerShell + IExpress ecosystem, with minimal external dependencies and ZERO Kiro credits for launcher/update operations.
 
-For items such as:
-API
-dependency
-deployment
-log summary
-DB collection
-recent change
-
-provide “Ask MIM Expert” capability.
-
-Automatically attach the selected item + service context so the user can ask:
-“Why is this important?”
-“Show code for this.”
-“Could this cause the current issue?”
-“What consumes this API?”
-
-10. Reliability
-
-- All investigation access remains read-only.
-- One failing integration must not block other sections.
-- Clearly show Connected / Unavailable / Error states.
-- Never expose credentials/tokens.
-- Do not invent missing information.
-- Show evidence/sources for AI conclusions.
-- Preserve all existing functionality.
-
-Target experience:
-
-Select service
-→ instantly see its complete 360° overview
-→ ask normal-language questions
-→ inspect runtime/code/logs/DB/APIs/dependencies
-→ jump to the right tool with one click
-→ return to Service 360 with context preserved.
-
-Service 360 should become the central entry point for understanding and working with any MIM service.
-
-
-
------------------
-
-
-
-Implement a complete **AI-powered API Explorer** in the existing MIM Expert Angular + Node application.
-
-First inspect and reuse existing mim-expert/Kiro CLI, GitLab, OpenShift, KB, Service 360, profiles, visualization and configuration integrations. Implement end-to-end without duplicating existing services or breaking functionality.
-
-**GOAL:** Users describe what data they need in natural language. AI discovers and ranks relevant MIM APIs, prefills parameters, and lets users execute selected APIs directly in the UI.
-
-### 1. API Explorer UI
-Create a dedicated page with:
-- Prominent “Ask Your APIs” natural-language search bar.
-- AI Discovery (default) and Manual Explorer modes.
-- Ranked API suggestions showing service, method, endpoint, purpose, match confidence and source.
-- Expandable request builder: URL, headers, path/query parameters and JSON body.
-- Execute API button, request preview and execution status.
-- Response views: JSON, Table, Tree and intelligent Charts.
-- API history, saved/favorite requests and execution details.
-
-### 2. Intelligent API Discovery
-For queries like:
-- "Get latest status of PIN 12345"
-- "Find participant details"
-- "Show transaction history for this PIN"
-
-Use mim-expert to identify relevant APIs through:
-- OpenAPI/Swagger specs when available.
-- GitLab Java controllers, mappings and DTOs.
-- MIM Knowledge Base/business rules.
-- Existing OpenShift integration for deployed routes/base URLs.
-
-Important: **OpenShift routes identify service hosts, not necessarily individual endpoints.** Combine the sources above; do not guess or fabricate APIs.
-
-Rank all relevant discovered APIs and explain which data each returns. Clearly distinguish verified endpoints from uncertain matches. Do not automatically execute APIs during discovery.
-
-### 3. AI Parameter Autofill
-Extract PIN, IDs, dates, statuses and other parameters from the user's request.
-
-Automatically map them to verified API parameters/body schemas. Reuse selected service and previous API context for follow-up queries.
-
-Show the complete editable request before execution. If required information is missing, identify it clearly.
-
-### 4. Controlled API Execution
-User explicitly selects and executes an API.
-
-Flow:
-Natural language → AI discovery → structured API request → backend validation → user execution → response.
-
-Use the existing Node backend to call APIs through the configured OpenShift environment. Reuse existing service authentication.
-
-Never let AI execute arbitrary URLs/commands. Enforce allowed hosts/routes, method and endpoint permissions, authentication, timeouts and response-size limits server-side.
-
-Initially execute only verified, permitted read-only operations. Do not assume GET is automatically safe or POST is automatically unsafe. Block unknown or state-changing operations until explicitly authorized.
-
-Never expose credentials/tokens.
-
-### 5. AI Multi-API Chaining
-If a request requires multiple APIs, AI should propose an ordered execution plan showing:
-- required APIs
-- purpose of each call
-- parameter dependencies
-- expected results.
-
-Example:
-"Get participant details, latest status and event history for PIN 12345."
-
-Show the plan and execute only after user approval, using permitted read-only endpoints. Pass outputs between steps where required and combine responses into one readable result.
-
-### 6. Response Intelligence
-Provide:
-- formatted JSON, searchable tables and expandable trees
-- automatic suitable charts/timelines using existing visualization libraries
-- HTTP status, response time and useful error details
-- pagination for large results
-- copy/export where permitted.
-
-Add **“Ask MIM Expert about this Response”** for selected fields, rows or entire bounded results.
-
-Pass only relevant response context so mim-expert can correlate with KB, GitLab, MongoDB or OpenShift when needed.
-
-### 7. App Integration
-- Reuse globally selected service/context.
-- Service 360 → View APIs opens Explorer prefiltered to that service.
-- Support broader cross-service discovery when requested.
-- Preserve context on navigation.
-- Reuse Default/Developer/Tester/Business response profiles for relevant presentation.
-- Keep normal API execution deterministic; use Kiro primarily for discovery, interpretation and explanation.
-
-### 8. UX and Reliability
-Show immediate progress:
-Discovering → Ranking → Preparing → Executing → Completed/Failed.
-
-Handle unavailable routes, missing API specs, authorization failures, timeouts, empty results and invalid parameters gracefully.
-
-Never display fabricated responses or silently call an alternative endpoint.
-
-Preserve all existing integrations and functionality. Validate the complete flow with actual accessible MIM endpoints rather than mock-only implementations.
-
-**TARGET EXPERIENCE:**
-User asks in normal language → AI discovers possible APIs → user selects one → parameters autofill → user executes → readable visual response → optional AI analysis.
-
-Make this a polished, production-conscious, AI-first alternative to manually finding and calling APIs through Swagger/Postman.
 
 
 
