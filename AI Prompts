@@ -1,95 +1,242 @@
-Implement a full Web IDE experience inside MIM Expert and replace the current Git ChangeSet page with it.
+Implement a new “MIM DB Workbench” with an AI-first MongoDB Query experience.
 
-First inspect the existing Angular/Node architecture, repo selector, ChangeSet model, Git actions and Kiro integration. Reuse existing functionality; do not create duplicate Git/session systems.
+First inspect the existing Angular/Node architecture, MongoDB connection/configuration, user profiles and mim-expert/Kiro integration. Reuse existing services and connection handling; do not create duplicate Mongo auth/config systems.
 
-1. Web IDE
-Integrate a browser-based VS Code experience (prefer code-server/OpenVSCode rather than building an editor from scratch).
+GOAL:
+Allow Developer/Tester users to query MongoDB in plain English without knowing Mongo syntax.
 
-The currently selected repo from the global repo selector must open as the IDE workspace and switch automatically when the selected repo changes.
+Examples:
+- “Show me the latest record for PIN 123456”
+- “Show last 10 records for this PIN”
+- “Show failed records created today”
+- “Compare the latest two records”
+- “Show only records where status is PROCESSING”
 
-Provide normal IDE capabilities:
-- file explorer
-- editor
-- search
-- multi-file tabs
-- source control
-- changed-files view
-- side-by-side Git diff/review
-- branch/status/history
-- terminal where supported
-- existing user-triggered Build/Test/Commit/Push actions.
+1. DB Workbench Page
 
-Goal: users should be able to perform normal development/review work without opening a separate local IDE.
+Create a dedicated DB Workbench page with:
 
-2. Preserve ChangeSets
-Remove the need for a separate ChangeSet page, but DO NOT remove the ChangeSet backend concept.
+- Database/Collection explorer
+- AI Query input as the PRIMARY interface
+- Results area with:
+  Table | JSON | Tree | Visualize
+- Generated Query expandable section
+- execution time/result count
+- query history
+- saved/favorite queries
+- “Ask MIM Expert about Results”
 
-Changes implemented by MIM Expert must remain linked to their ChangeSet/chat/fix metadata.
+Keep an optional “Advanced Query” tab for developers who want to enter raw read-only Mongo filters/aggregations.
 
-When such changes exist, the Web IDE Source Control/changed-files view must expose them and allow the user to review exact diffs.
+2. AI Query Flow
 
-Existing rule remains:
-MIM Expert implements code → STOP.
-Build/Test/Commit/Push remain explicit USER actions.
+Flow:
 
-3. Quick Edit Assistant
-Add a small floating “Ask”/AI icon inside the Web IDE.
+Natural-language request
+→ use selected DB/collection + discovered schema as context
+→ generate a structured Mongo read query
+→ validate it server-side
+→ execute through Node/MongoDB integration
+→ return formatted results.
 
-Clicking it opens a compact chat drawer called Quick Edit.
+Do NOT execute arbitrary AI-generated text directly.
 
-Quick Edit must use the existing Kiro CLI / mim-expert runtime in QUICK_EDIT mode; do not create another user-facing agent.
+Use a structured internal query model such as:
+operation
+database
+collection
+filter
+projection
+sort
+limit
+pipeline
+
+The backend must convert this validated model into Mongo operations.
+
+3. Context Awareness
+
+The AI Query Builder must automatically know:
+- selected database
+- selected collection
+- known fields/schema
+- previous query/result context in the current DB session.
+
+Support follow-ups such as:
+
+“Show last 10 records for PIN 123”
+→ “Only failed ones”
+→ “Compare the latest two”
+→ “Show status history”
+
+Follow-ups must reuse previous DB/query context.
+
+If no collection is selected, use available schema/project metadata to infer the most relevant collection when confidence is sufficient.
+
+If the request cannot be mapped safely, do not run a query; return a clear blocker.
+
+4. READ-ONLY SAFETY
+
+DB Workbench must be strictly read-only, especially for PROD.
+
+Allow only operations such as:
+- find
+- aggregate
+- count
+- distinct
+- sort
+- projection
+- limit
+- explain
+- read-only schema/index metadata
+
+Hard-block both UI and backend execution of:
+- insert
+- update
+- delete
+- replace
+- drop
+- createIndex
+- $out
+- $merge
+- any write/admin operation.
+
+Do not rely only on hidden UI controls; enforce this in backend validation.
+
+Add safe limits:
+- configurable maximum rows
+- query timeout
+- aggregation limits where appropriate.
+
+Show a visible:
+PROD • READ ONLY
+badge when connected to production.
+
+5. Generated Query
+
+After natural-language interpretation, show the actual generated Mongo query in an expandable “Generated Query” section.
+
+Example:
+
+User:
+“Give me last 10 records for PIN 123456”
+
+Generated query:
+find({ pin: "123456" })
+.sort({ createdAt: -1 })
+.limit(10)
+
+The query preview is for transparency/debugging; execution must still use the validated structured query model.
+
+6. Result Experience
+
+Make results highly readable.
+
+Provide:
+
+Table View
+→ sortable columns, nested-field support, pagination.
+
+JSON View
+→ formatted/collapsible JSON.
+
+Tree View
+→ expandable nested object/array hierarchy.
+
+Visualize
+→ intelligently suggest useful charts based on result field types using the existing/new visualization framework.
+
+Examples:
+status distribution → pie/bar
+timestamps → timeline
+numeric values → line/bar distribution.
+
+Never force visualization when data is not suitable.
+
+7. Ask MIM Expert
+
+Allow:
+- entire result set
+- selected rows/documents
+- selected fields
+
+to be passed to:
+“Ask MIM Expert”
 
 Automatically provide context:
-- currently selected/open repo
-- workspace path
-- current branch
-- active file
-- selected code/text when available
-- current local Git changes.
+database
+collection
+query
+selected records
+field names
 
-4. Quick Edit behavior
-The user should be able to give a direct instruction such as:
-“Make this null-safe”
-“Add tests for this method”
-“Change this API to return 404 when not found”
-“Refactor this implementation”
+Then mim-expert may use DB + GitLab + Splunk + OpenShift + KB only as needed to answer questions such as:
 
-Then automatically:
-understand repo context → inspect required code → determine required files → implement the complete change → save files → refresh IDE/Source Control → show changed files/diffs → STOP.
+“Why is this record still PROCESSING?”
+“Which code writes this field?”
+“Find logs related to this transaction.”
 
-Do NOT create a spec/plan/RCA first.
-Do NOT ask for confirmation.
-Do NOT ask follow-up questions when the change can reasonably be inferred from code/context.
+Do not automatically send huge raw result sets; pass only relevant selected/contextual data.
 
-If the request is genuinely unsafe or impossible to determine unambiguously, make NO changes and return the exact blocker.
+8. Profile Awareness
 
-5. Strict scope
-Quick Edit may modify ONLY the repository currently open in the Web IDE.
+Reuse the existing Response Profile.
 
-It must never silently modify another service/repo.
-Any cross-service change must go through the normal main MIM Expert analysis/fix flow.
+Developer:
+show AI Query + Advanced Query + raw JSON + schema/index/explain details.
 
-6. IDE synchronization
-After Quick Edit or normal MIM Expert modifies files:
-- refresh affected files and Source Control immediately
-- preserve unrelated existing local changes
-- never overwrite/discard user modifications
-- show exact resulting diffs.
+Tester:
+prioritize AI Query, filters, readable table/tree results, comparison and saved queries.
 
-Repo switching must also update both the IDE workspace and Quick Edit context.
+Business:
+hide DB Workbench by default unless existing permissions/product rules explicitly allow it.
 
-7. Security/behavior
-Do not expose credentials/tokens to the IDE/chat.
-Do not automatically build, test, commit, push, pull or publish code from Quick Edit.
-Preserve all existing Git safeguards and current MIM Expert functionality.
+Profile affects UX, not DB safety.
+
+9. Architecture
+
+Interactive DB queries must NOT depend on Kiro/MCP for every database call.
+
+Use:
+
+Angular DB Workbench
+→ Node backend
+→ existing MongoDB driver/connection
+→ MongoDB
+
+Use mim-expert/Kiro only for:
+- natural-language interpretation/query generation
+- Ask MIM Expert reasoning.
+
+Keep Mongo authentication/connection credentials backend-only and never expose them to Angular, prompts, logs or console output.
+
+10. UX
+
+When Run is clicked:
+→ immediately show Generating Query
+→ Validating
+→ Executing
+→ Results
+
+Never leave the UI appearing idle while work is happening.
+
+Handle clearly:
+connection failure
+invalid query
+collection not found
+timeout
+zero results
+AI interpretation failure.
+
+Preserve all existing app functionality.
 
 Target experience:
 
-Main MIM Expert → analysis/RCA/multi-service fixes
-Web IDE → complete browser development + Git review
-Web IDE Ask → one-prompt direct code modification of the currently selected repo only
-
-Implement this end-to-end and integrate it cleanly into the existing application.
+User selects collection
+→ asks “Give me the latest data for PIN 12345”
+→ AI creates a safe read-only query
+→ backend validates and executes it
+→ user gets readable Table/JSON/Tree/Visual results
+→ user can continue with follow-up queries or Ask MIM Expert about the data.
 
 
 
