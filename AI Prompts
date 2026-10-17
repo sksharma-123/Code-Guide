@@ -1,242 +1,204 @@
-Implement a new “MIM DB Workbench” with an AI-first MongoDB Query experience.
+Implement a new AI-powered “Service 360°” page as the central hub for every MIM service.
 
-First inspect the existing Angular/Node architecture, MongoDB connection/configuration, user profiles and mim-expert/Kiro integration. Reuse existing services and connection handling; do not create duplicate Mongo auth/config systems.
+First inspect the existing Angular/Node architecture, repo selector, GitLab/OpenShift/Mongo/Splunk integrations, Web IDE, user profiles and mim-expert. Reuse existing services/state; do not create duplicate integration layers.
 
 GOAL:
-Allow Developer/Tester users to query MongoDB in plain English without knowing Mongo syntax.
+When a user opens any MIM service, they should understand, investigate and navigate almost everything about that service from one page without switching to GitLab, OpenShift, Splunk, DB tools or IDE manually.
+
+1. Service Selection
+
+Reuse the existing globally selected repo/service.
+
+When selected service changes:
+→ Service 360 must automatically refresh to that service
+→ clear stale data
+→ show loading states
+→ never mix data from two services.
+
+Exclude `mim-knowledge-base` from normal MIM business-service analysis where appropriate.
+
+2. 360 Overview
+
+Show a clean summarized overview containing available data such as:
+
+- service purpose/business responsibility
+- local repo availability/path
+- Git branch/status
+- GitLab repo
+- deployed/runtime status
+- OpenShift route/pods
+- deployed version/image
+- important APIs
+- Mongo databases/collections used
+- Splunk/log availability
+- upstream/downstream dependencies
+- recent relevant commits/changes
+- build/test status where available.
+
+Load each section independently so one unavailable integration does not break the entire page.
+
+Show source/freshness information where useful.
+
+3. AI-First Service Query
+
+Add a prominent natural-language input:
+
+“Ask anything about this service…”
 
 Examples:
-- “Show me the latest record for PIN 123456”
-- “Show last 10 records for this PIN”
-- “Show failed records created today”
-- “Compare the latest two records”
-- “Show only records where status is PROCESSING”
+- “What does this service do?”
+- “Which APIs does it expose?”
+- “What services depend on it?”
+- “Which collections does it use?”
+- “Show recent errors.”
+- “Where is PIN validation implemented?”
+- “What changed recently?”
+- “Is this service healthy?”
+- “What can break if I change this DTO?”
 
-1. DB Workbench Page
+Automatically provide the currently selected service as context.
 
-Create a dedicated DB Workbench page with:
+mim-expert must dynamically use only required sources:
+KB, GitLab, OpenShift/API, MongoDB, Splunk or existing project metadata.
 
-- Database/Collection explorer
-- AI Query input as the PRIMARY interface
-- Results area with:
-  Table | JSON | Tree | Visualize
-- Generated Query expandable section
-- execution time/result count
-- query history
-- saved/favorite queries
-- “Ask MIM Expert about Results”
+Do not query every source for every question.
 
-Keep an optional “Advanced Query” tab for developers who want to enter raw read-only Mongo filters/aggregations.
+4. Quick Actions
 
-2. AI Query Flow
+Provide contextual actions such as:
 
-Flow:
+- Open in Web IDE
+- View Code
+- View Git Changes
+- View APIs
+- View Logs
+- Open DB Workbench
+- View Runtime
+- View Dependencies
+- View Recent Changes
+- Build
+- Test
+- Ask MIM Expert
 
-Natural-language request
-→ use selected DB/collection + discovered schema as context
-→ generate a structured Mongo read query
-→ validate it server-side
-→ execute through Node/MongoDB integration
-→ return formatted results.
+Only show actions actually available for the selected service.
 
-Do NOT execute arbitrary AI-generated text directly.
+Reuse existing pages/tools instead of duplicating their functionality.
+Deep-link them with current service context already selected.
 
-Use a structured internal query model such as:
-operation
-database
-collection
-filter
-projection
-sort
-limit
-pipeline
+5. Dependency / Impact View
 
-The backend must convert this validated model into Mongo operations.
+Add an interactive service dependency section.
 
-3. Context Awareness
+Show:
+- upstream dependencies
+- downstream consumers
+- related APIs/events where discoverable.
 
-The AI Query Builder must automatically know:
-- selected database
-- selected collection
-- known fields/schema
-- previous query/result context in the current DB session.
+Support natural-language impact questions such as:
+“If this API/DTO/event changes, what can be impacted?”
 
-Support follow-ups such as:
+Use current code/KB/dependency evidence and clearly separate:
+confirmed dependencies
+vs
+possible/inferred impact.
 
-“Show last 10 records for PIN 123”
-→ “Only failed ones”
-→ “Compare the latest two”
-→ “Show status history”
+Allow clicking a dependency to open its Service 360 page.
 
-Follow-ups must reuse previous DB/query context.
+6. Runtime & Release Intelligence
 
-If no collection is selected, use available schema/project metadata to infer the most relevant collection when confidence is sufficient.
+Where data is available, correlate:
 
-If the request cannot be mapped safely, do not run a query; return a clear blocker.
+OpenShift deployed service
+→ deployed image/version
+→ Git tag/commit
+→ recent code changes.
 
-4. READ-ONLY SAFETY
+Allow questions such as:
+“Did this issue start after the latest deployment?”
+“What changed in the currently deployed release?”
 
-DB Workbench must be strictly read-only, especially for PROD.
+Do not claim correlation when version mapping cannot be confirmed.
 
-Allow only operations such as:
-- find
-- aggregate
-- count
-- distinct
-- sort
-- projection
-- limit
-- explain
-- read-only schema/index metadata
+7. Logs / DB / API Context
 
-Hard-block both UI and backend execution of:
-- insert
-- update
-- delete
-- replace
-- drop
-- createIndex
-- $out
-- $merge
-- any write/admin operation.
+Service 360 should not duplicate full tooling.
 
-Do not rely only on hidden UI controls; enforce this in backend validation.
+Instead show useful summaries/previews and provide deep links:
 
-Add safe limits:
-- configurable maximum rows
-- query timeout
-- aggregation limits where appropriate.
+Logs
+→ recent errors/counts + Open Logs Explorer
 
-Show a visible:
-PROD • READ ONLY
-badge when connected to production.
+DB
+→ related databases/collections + Open DB Workbench
 
-5. Generated Query
+APIs
+→ important endpoints + Open API Explorer
 
-After natural-language interpretation, show the actual generated Mongo query in an expandable “Generated Query” section.
+Code
+→ relevant modules/classes + Open Web IDE.
 
-Example:
-
-User:
-“Give me last 10 records for PIN 123456”
-
-Generated query:
-find({ pin: "123456" })
-.sort({ createdAt: -1 })
-.limit(10)
-
-The query preview is for transparency/debugging; execution must still use the validated structured query model.
-
-6. Result Experience
-
-Make results highly readable.
-
-Provide:
-
-Table View
-→ sortable columns, nested-field support, pagination.
-
-JSON View
-→ formatted/collapsible JSON.
-
-Tree View
-→ expandable nested object/array hierarchy.
-
-Visualize
-→ intelligently suggest useful charts based on result field types using the existing/new visualization framework.
-
-Examples:
-status distribution → pie/bar
-timestamps → timeline
-numeric values → line/bar distribution.
-
-Never force visualization when data is not suitable.
-
-7. Ask MIM Expert
-
-Allow:
-- entire result set
-- selected rows/documents
-- selected fields
-
-to be passed to:
-“Ask MIM Expert”
-
-Automatically provide context:
-database
-collection
-query
-selected records
-field names
-
-Then mim-expert may use DB + GitLab + Splunk + OpenShift + KB only as needed to answer questions such as:
-
-“Why is this record still PROCESSING?”
-“Which code writes this field?”
-“Find logs related to this transaction.”
-
-Do not automatically send huge raw result sets; pass only relevant selected/contextual data.
+Pass selected service context automatically.
 
 8. Profile Awareness
 
-Reuse the existing Response Profile.
+Reuse existing profiles:
+Default, Developer, Tester, Business.
 
 Developer:
-show AI Query + Advanced Query + raw JSON + schema/index/explain details.
+emphasize code, dependencies, Git, APIs, DB, runtime, build/test.
 
 Tester:
-prioritize AI Query, filters, readable table/tree results, comparison and saved queries.
+emphasize APIs, runtime, logs, DB state, expected behavior, test/regression information.
 
 Business:
-hide DB Workbench by default unless existing permissions/product rules explicitly allow it.
+emphasize service purpose, business flow, impact, dependencies and health.
+Hide low-level developer-only details unless explicitly requested.
 
-Profile affects UX, not DB safety.
+Default:
+balanced view.
 
-9. Architecture
+Profile changes must update presentation immediately without changing underlying evidence.
 
-Interactive DB queries must NOT depend on Kiro/MCP for every database call.
+9. “Ask About This”
 
-Use:
+Make major Service 360 elements context-aware.
 
-Angular DB Workbench
-→ Node backend
-→ existing MongoDB driver/connection
-→ MongoDB
+For items such as:
+API
+dependency
+deployment
+log summary
+DB collection
+recent change
 
-Use mim-expert/Kiro only for:
-- natural-language interpretation/query generation
-- Ask MIM Expert reasoning.
+provide “Ask MIM Expert” capability.
 
-Keep Mongo authentication/connection credentials backend-only and never expose them to Angular, prompts, logs or console output.
+Automatically attach the selected item + service context so the user can ask:
+“Why is this important?”
+“Show code for this.”
+“Could this cause the current issue?”
+“What consumes this API?”
 
-10. UX
+10. Reliability
 
-When Run is clicked:
-→ immediately show Generating Query
-→ Validating
-→ Executing
-→ Results
-
-Never leave the UI appearing idle while work is happening.
-
-Handle clearly:
-connection failure
-invalid query
-collection not found
-timeout
-zero results
-AI interpretation failure.
-
-Preserve all existing app functionality.
+- All investigation access remains read-only.
+- One failing integration must not block other sections.
+- Clearly show Connected / Unavailable / Error states.
+- Never expose credentials/tokens.
+- Do not invent missing information.
+- Show evidence/sources for AI conclusions.
+- Preserve all existing functionality.
 
 Target experience:
 
-User selects collection
-→ asks “Give me the latest data for PIN 12345”
-→ AI creates a safe read-only query
-→ backend validates and executes it
-→ user gets readable Table/JSON/Tree/Visual results
-→ user can continue with follow-up queries or Ask MIM Expert about the data.
+Select service
+→ instantly see its complete 360° overview
+→ ask normal-language questions
+→ inspect runtime/code/logs/DB/APIs/dependencies
+→ jump to the right tool with one click
+→ return to Service 360 with context preserved.
+
+Service 360 should become the central entry point for understanding and working with any MIM service.
 
 
 
