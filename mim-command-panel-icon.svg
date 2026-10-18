@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-labelledby="title desc">
+  <title id="title">MIM Command Panel</title>
+  <desc id="desc">Minimal navy application icon with a geometric white M and teal command terminal.</desc>
+
+  <!-- Window-friendly, transparent rounded corners -->
+  <rect x="8" y="8" width="496" height="496" rx="100" fill="#193C63"/>
+
+  <!-- Quiet secondary stroke of the monogram -->
+  <path d="M100 165 C98 163 96 164 96 170 V356 C96 361 98 365 103 368 L152 407 C158 412 162 409 162 402 V231 C162 228 160 225 158 223 Z" fill="#6C93B6"/>
+
+  <!-- Main M: custom geometric vector, no font dependency -->
+  <path d="M110 117 H153 L250 216 L345 117 H399 C409 117 415 123 415 133 V272 H343 V210 L252 304 C248 308 245 308 241 304 L102 166 C98 162 96 157 96 152 V131 C96 122 101 117 110 117 Z" fill="#FFFFFF"/>
+
+  <!-- Integrated command terminal: restrained teal outline -->
+  <rect x="275" y="283" width="172" height="122" rx="23" fill="#193C63" stroke="#43B8BC" stroke-width="12"/>
+  <path d="M316 319 L347 344 L316 369" fill="none" stroke="#FFFFFF" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M363 369 H404" fill="none" stroke="#43B8BC" stroke-width="12" stroke-linecap="round"/>
+</svg>
