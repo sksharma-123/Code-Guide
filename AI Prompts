@@ -1,391 +1,384 @@
-Implement a complete **MIM Test Evidence Studio** in the existing Angular + Node MIM Expert application.
+MIM DB Workbench — Professional Visual-First MongoDB Client
 
-First inspect the existing chat/session memory, RCA, ChangeSets, user profiles, configuration, Windows launcher, IExpress packaging and Kiro CLI integration. Reuse existing components and storage wherever possible. Implement everything end-to-end without breaking existing functionality.
+Enhance the EXISTING MIM DB Workbench into a powerful, intuitive, Studio 3T-inspired MongoDB querying experience, while retaining its MIM-specific AI capabilities.
 
-**GOAL:** Developers and QA perform manual testing, capture screenshots using a floating Windows desktop button, and generate professional testing documents with AI-generated step names and descriptions.
+Primary goal: Make everyday MongoDB querying extremely easy through mouse-driven interactions, without requiring users to remember field names or MongoDB syntax.
 
-### 1. Generate Testing Handoff from MIM Expert Chat
+This is NOT a request to clone Studio 3T’s proprietary UI or code. Build an original, professional experience offering equivalent useful workflows.
 
-Add **Generate Testing Handoff** to the existing main chat.
+1. First Inspect Existing Architecture
 
-Using the relevant complete chat context, RCA, implementation details, ChangeSet and final decisions, generate ONE comprehensive QA-oriented handoff containing:
+Before implementation, inspect:
 
-- Issue or new implementation summary
-- Root cause, if applicable
-- Implemented changes and affected services
-- Expected functionality/behavior
-- Relevant build/commit references when available
-- Suggested positive, negative, boundary and regression scenarios
-- Preconditions, test data and expected results
-- Important validation points
+* Existing Angular DB Workbench pages/components.
+* Node backend MongoDB integration.
+* Existing authentication/OIDC and read-only policies.
+* Natural-language query generation and execution.
+* Table/Tree/JSON viewers.
+* Existing query validation, pagination and persistence.
+* Installed npm packages and existing UI components.
 
-Use only verified information; flag uncertain expectations for review.
+Reuse and enhance existing functionality. Avoid duplicate components, redundant APIs, paid dependencies and unnecessary architectural changes.
 
-Allow reviewing/editing the handoff and export it as a portable versioned JSON file. Exclude credentials, secrets and unnecessary sensitive data.
+Do not break existing MongoDB connectivity, MIM Expert chat integration, authentication or other application modules.
 
-Both Developer and QA must be able to import the SAME handoff into their separate local MIM Expert installations. No central server or shared database is required.
+2. UX Philosophy — Visual First, Minimal Interface
 
-### 2. Test Evidence Studio
+The default DB Workbench must be extremely clean.
 
-Create a dedicated page with persistent local testing sessions.
+Prioritize the most frequent tasks:
 
-On importing a handoff:
-- Create an independent editable testing session.
-- Load all suggested scenarios.
-- Allow selecting/deselecting, adding, editing, deleting and reordering scenarios.
-- Allow creating entirely new custom scenarios.
-- Preserve the original handoff unchanged.
-- Support independent Developer/QA testing and reports.
+1. Select a database and collection.
+2. Browse existing documents.
+3. Filter by an exact field value.
+4. Apply one-click sorting.
+5. Add or remove filter conditions.
+6. Switch between Table, Tree and JSON views.
+7. Execute and inspect results.
 
-Example: A handoff contains 10 scenarios. Developer may test only 2; QA may test 5, including additional custom scenarios.
+Common tasks should require only one or two clicks.
 
-Each scenario must support:
-NOT_STARTED → IN_PROGRESS → PAUSED/RESUMED → REVIEW → COMPLETED.
+Advanced features must be available through contextual menus, expandable panels and clearly organized modes, without overwhelming ordinary users.
 
-Record Pass/Fail/Blocked, actual results and tester notes separately from execution state.
+Use resizable panels, sensible defaults, keyboard shortcuts, loading states, empty states and a responsive layout.
 
-Only ONE scenario may actively capture screenshots at a time.
+3. Studio 3T-Style Interactive Results Grid
 
-### 3. Floating Windows Screenshot Capture
+Implement a professional MongoDB results grid with:
 
-When the user clicks **Start Testing** on a scenario:
+* Resizable and reorderable columns.
+* One-click ascending/descending sorting.
+* Click cycle: Ascending → Descending → No Sort.
+* Shift+click for multi-column sorting.
+* Server-side filtering, sorting and pagination.
+* Column visibility and projection controls.
+* Expandable nested BSON objects and arrays.
+* Correct display of ObjectId, Date, Decimal128, Boolean, Null and arrays.
+* Copy cell value, field path, document and JSON.
+* Table, Tree and JSON display modes.
+* Adjustable result limits and efficient rendering.
+* Clear loading, timeout, error and empty-result feedback.
 
-- Launch a small always-on-top floating screenshot widget visible across the entire Windows VDI, even when another application/window is active.
-- Show the active scenario name and Capture/Pause controls.
-- Keep it visible while testing is active.
-- Hide/disable it when paused or capture is finished.
-- Restore it when testing resumes.
+Sorting must operate on the MongoDB query, not merely on currently visible rows.
 
-Clicking **Capture Screenshot** must:
-- Capture the full VDI desktop/selected display by default, with an optional active-window mode.
-- Temporarily hide the floating widget from the captured image.
-- Automatically save the screenshot locally against the currently active session/scenario.
-- Preserve chronological order, timestamp and screenshot ID.
-- Immediately update the scenario evidence count.
-- Keep the widget available for repeated captures.
+Prefer existing grid components. Evaluate AG Grid Community only if it offers clear benefits and is approved/available internally.
 
-No manual screenshot upload or attachment should be required during normal capture.
+Do not introduce AG Grid Enterprise or other paid dependencies.
 
-**Technical requirement:** Since the existing app runs in a browser, implement a lightweight Windows-native floating capture helper using available Windows/.NET/PowerShell capabilities. Bundle it within the existing installer/portable build.
+4. Drag-and-Drop Query Building
 
-Do NOT require Electron, external software installation, administrator privileges or changes to corporate security policies. Verify VDI compatibility. If desktop capture is restricted, show a clear error and provide clipboard-paste/manual-upload fallback.
+This is a CRITICAL feature.
 
-Capture only on explicit user action; never record the desktop continuously.
-
-### 4. Powerful Screenshot Editor
-
-Integrate a professional npm-based image editor into the Angular UI.
-
-Prefer **Filerobot Image Editor**, subject to compatibility and licensing checks; use another suitable maintained package if necessary.
-
-Required capabilities:
-- Crop/rotate
-- Arrows, rectangles, shapes and highlights
-- Text annotations and numbering
-- Blur and irreversible sensitive-data redaction
-- Undo/redo
-- Zoom
-- Screenshot reorder/delete/replace
-- Editable captions
-
-Save edited copies without destroying original evidence. Ensure exported redacted images cannot reveal underlying sensitive pixels.
-
-Allow users to finish capturing, return to MIM Expert, edit all screenshots and then finalize the scenario.
-
-### 5. AI Screenshot-to-Test-Step Generation
-
-This is the MOST IMPORTANT capability.
-
-**Each screenshot represents exactly ONE testing step.**
-
-Examples:
-4 screenshots → 4 steps.
-10 screenshots → 10 steps.
-
-After screenshot capture/editing, provide **Generate Steps with AI**.
-
-Use the imported handoff, scenario objective, expected behavior, user notes and ordered screenshot images as context.
-
-AI must visually analyze each screenshot and generate:
-
-- Step number
-- Meaningful professional step name
-- Concise description of the visible action/result
-- Exact corresponding screenshot
+Users must be able to drag existing field names or document values from Table/Tree views directly into a Filter Builder.
 
 Examples:
 
-Screenshot showing PIN search → "Search Participant by PIN"
+Drag status = FAILED into Filter:
 
-Screenshot showing participant details → "Verify Participant Details"
+Automatically create:
 
-Screenshot showing final status → "Verify PIN Processing Status"
+{ "status": "FAILED" }
 
-If screenshot meaning is unclear, use a neutral professional name such as "Verify Application Screen State" and a factual, non-speculative description.
+Drag processing.retryCount = 3:
 
-Never skip, merge, fabricate or reorder steps. Preserve strict screenshot-to-step mapping.
+Automatically recognize the complete nested field path and numeric BSON type.
 
-Allow users to edit generated names/descriptions manually.
+The user may then change the operator to:
 
-Verify whether the existing Kiro CLI/runtime supports actual image understanding. Use approved multimodal capabilities when available. If unavailable, transparently fall back to generic step names and editable descriptions; never falsely claim screenshots were visually analyzed.
+Equals, Not Equals, Greater Than, Less Than, Greater/Equal, Less/Equal, Between, In, Not In, Exists, Contains, Starts With or other compatible operations.
 
-Optimize credits by batching screenshot analysis per scenario, reusing context and regenerating only changed steps when possible.
+Only display operators appropriate to the selected field’s datatype.
 
-### 6. Scenario Review and Completion
+Support dragging fields into:
 
-After AI step generation:
-- Show every step with its screenshot and editable description.
-- Allow editing/reordering/deleting screenshots and associated steps.
-- Allow adding actual results and comments.
-- User manually assigns Pass/Fail/Blocked.
-- Mark the scenario Completed only after user review.
+* Filter conditions.
+* Sort criteria.
+* Projection/column selection.
 
-Never let AI assume a scenario passed merely from screenshots.
+Provide visual drop targets, hover highlighting, drag previews and removable/editable filter chips.
 
-Persist all changes automatically and support pause/resume, application restart and crash recovery.
+Use Angular CDK drag-drop if appropriate.
 
-### 7. Professional Testing Document Generation
+No AI call is allowed for drag-and-drop, filtering, sorting or ordinary query execution.
 
-Add **Generate Testing Document**.
+5. Powerful Right-Click Context Menus
 
-Produce editable Word (.docx), PDF and HTML preview using reusable professional templates.
+Right-clicking a cell or field must expose useful context-aware actions.
+
+For example:
+
+* Filter Equals This Value.
+* Filter Not Equals This Value.
+* Greater Than / Less Than when applicable.
+* Filter Null / Not Null.
+* Filter by Field Existence.
+* Add to Existing Filter.
+* Sort Ascending / Descending.
+* Copy Value.
+* Copy Field Name / Full Field Path.
+* Copy Document as JSON.
+* Show/Hide Column.
+* Add Field to Projection.
+* Inspect Full Value.
+
+Nested fields must retain correct paths.
+
+Example: processing.retryCount, not merely retryCount.
+
+Right-click actions should be fast, intuitive, and should never generate Kiro requests.
+
+Use proper menu positioning and keyboard accessibility.
+
+6. Smart Visual Filter Builder
+
+Create a compact, intuitive query builder.
+
+Support:
+
+* Field selection with autocomplete.
+* Type-aware value input.
+* AND/OR conditions and nested condition groups.
+* Add, edit, remove and reorder conditions.
+* Filter chips with clear labels.
+* Clear individual/all filters.
+* Quick exact-value filtering.
+* Visual sorting rules.
+* Projection controls.
+* Generated MongoDB query preview.
+
+Allow users to edit filters without manually modifying JSON.
+
+Support valid BSON values, nested fields and arrays.
+
+A newly added filter should not automatically execute unexpectedly; provide explicit Apply/Run behavior, with a clear indication of pending changes.
+
+Keep the interface compact by default.
+
+7. Three Connected Query Modes
+
+Retain and integrate the following modes:
+
+A. Natural Language
+
+Keep existing human-language querying.
+
+Example:
+
+“Find failed participants having more than two retries.”
+
+AI generates a safe structured read-only query.
+
+B. Visual Builder — Default
+
+Show generated conditions visually.
+
+Users can further refine queries through mouse-driven actions.
+
+C. Advanced Query Editor
+
+Provide a professional MongoDB query editor with syntax highlighting, autocomplete, field suggestions, formatting, validation and useful errors.
+
+Support read-only find queries and permitted aggregation pipelines.
+
+Reuse the existing Monaco/editor integration where possible.
+
+All three modes should share a canonical structured query representation where supported.
+
+Natural Language → Visual Builder → Advanced Editor should work without losing compatible query conditions.
+
+When a complex advanced query cannot be accurately represented in Visual Builder, preserve it and display a clear non-destructive compatibility message. Never silently remove or rewrite unsupported operators.
+
+8. Advanced Querying & Aggregation
+
+Allow advanced users to execute supported MongoDB read-only queries.
 
 Include:
-- Test session title
-- Issue/implementation summary
-- RCA/fix context where relevant
-- Tester role and available version/build details
-- Selected/completed scenarios
-- Scenario objective, expected/actual results and status
-- AI-generated step names and descriptions
-- Each screenshot placed directly beneath its corresponding step
-- Tester comments and overall execution summary
-- Pass/Fail/Blocked counts
 
-Generate only from the user's current testing session, not every original handoff scenario.
+* Find with filters, sort, limit and projection.
+* Type-aware expressions.
+* Nested document and array filtering.
+* Advanced structured conditions.
+* Read-only aggregation pipelines.
+* Visual aggregation stage editing.
+* Enable/disable/reorder pipeline stages.
+* Explicit bounded preview of intermediate stages.
+* Query validation and meaningful errors.
+* Query execution timing.
+* Index information and permitted Explain Plan inspection.
 
-Provide document preview/editing before export. Never invent missing results or unsupported conclusions.
+Do not make these capabilities dominate the default UI.
 
-### 8. Persistence, Security and Token Optimization
+Provide advanced functionality progressively when the user requests it.
 
-- Store sessions, screenshots, edited images and reports in persistent per-user storage outside replaceable application binaries.
-- Preserve everything across future app upgrades.
-- Validate imported handoff files and prevent unsafe file/path access.
-- Never expose credentials or silently upload screenshots.
-- Respect corporate VDI capture and data-handling restrictions.
-- Use deterministic code for capture, image editing, storage, session management and DOCX/PDF generation.
-- Use Kiro only for handoff/scenario generation and screenshot understanding when requested.
-- Do not invoke Kiro during every capture or ordinary document export.
+9. Smart Query Memory — NO Visible Query History
 
-### 9. End-to-End Validation
+This is another CRITICAL UX requirement.
 
-Verify the complete workflow:
+Executed queries should be remembered automatically in persistent local storage, but there must be NO permanent History panel, Saved Queries sidebar, favorites list or historical-query table cluttering the interface.
 
-Original MIM Chat → Generate QA Handoff → Export JSON → Import into Developer/QA installation → Select/Edit/Add scenarios → Start Testing → Floating Windows Capture → Capture multiple screenshots → Pause/Resume → Edit screenshots → AI generates exactly one step per screenshot → Review → Mark Pass/Fail → Complete → Generate DOCX/PDF.
+Instead, implement Contextual Query Suggestions.
 
-Ensure the floating helper, Node backend, Angular UI and existing IExpress production/portable packaging work together.
+Example:
 
-Do not create mock-only implementations or duplicate existing functionality.
+A user previously executed:
 
-**FINAL TARGET:** Users perform manual testing normally while MIM Expert automatically collects their evidence, understands the screenshot sequence, names/describes testing steps and creates a professional testing document with minimum manual effort and optimized AI-credit usage.
+db.participants.find({status:"FAILED",retryCount:{$gt:2}})
 
-
-
-------------------
-
-
-
-Upgrade the existing **MIM Expert Windows application experience, launcher and version-update system** without changing its Angular + Node architecture.
-
-First inspect the complete existing implementation: `BUILD_EXE.cmd`, `build-installer.ps1`, `installer/MIMCommandPanel.iss`, VBS launcher, MIM Command Panel, bundled Node runtime, `version.json`, IExpress installer, portable ZIP, configuration storage and existing update checks.
-
-Implement end-to-end. Reuse working components and preserve all existing functionality.
-
-### 1. Windows Desktop App Experience
-
-Replace the normal browser-tab launch experience with a dedicated Windows-style MIM Expert application window using **Microsoft Edge App Mode**.
-
-Expected behavior:
-
-User double-clicks MIM Expert desktop shortcut → backend starts silently → health check completes → dedicated MIM Expert window opens.
+Later, when typing a related expression, relevant past queries appear as a small autocomplete suggestion dropdown.
 
 Requirements:
-- Use installed Edge with `--app=<local-url>`.
-- No normal browser tabs or address bar.
-- Dedicated MIM Expert app name, icon and taskbar experience.
-- Preserve existing Angular UI, Node backend and Web IDE.
-- Preserve the ability to open the UI in a normal browser as fallback.
-- Do NOT migrate to Electron or introduce a new desktop framework.
-- If Edge App Mode is restricted/unavailable, gracefully use the existing browser mode.
-- Keep local backend bound to loopback by default without breaking any explicitly configured shared-host functionality.
 
-### 2. Silent Launcher & Backend Lifecycle
+* Save successful user-executed read-only query definitions locally.
+* Deduplicate equivalent queries using normalized query fingerprints.
+* Match by partial expression, field name, operators and relevant text.
+* Support suggestions for Natural Language and Advanced Editor inputs.
+* Prefer same connection, environment, database and collection.
+* Never accidentally suggest a PROD query as an equivalent DEV query without clearly distinguishing its context.
+* Show a maximum of 3–5 highly relevant suggestions.
+* Suggestions only appear during meaningful typing or explicit autocomplete invocation.
+* Hide suggestions when irrelevant, dismissed or unfocused.
+* Selecting a suggestion fills the editor; it must NOT execute immediately.
+* Do not automatically run history queries.
+* Do not display old queries on page load.
+* Provide a discreet way to remove a suggestion.
+* Provide history retention/clear settings under Configuration or Settings, not in the primary workspace.
+* Avoid saving sensitive document values or secrets where inappropriate; support redaction and configurable retention limits.
 
-Normal users must NOT see the existing black VBS/PowerShell Command Panel.
+Use local deterministic indexing/fuzzy matching, such as MiniSearch if beneficial.
 
-Create/reuse a lightweight Windows launcher that:
-- Starts the bundled Node backend invisibly.
-- Serves the production Angular build through the existing backend where practical.
-- Waits for a real backend health check before opening the UI.
-- Prevents duplicate application/backend instances and port conflicts.
-- Reuses an already-running healthy instance.
-- Handles startup failures with an independent Windows error dialog.
-- Provides Retry, View Logs and Diagnostics actions.
-- Safely manages shutdown without killing unrelated Node or Edge processes.
-- Preserves active tasks and warns before unsafe shutdown.
+No Kiro calls for query-history suggestions.
 
-Keep the existing Command Panel accessible through an optional Developer/Debug Mode.
+Also provide field-name and operator autocomplete based on available collection metadata.
 
-### 3. Backend Logging & Diagnostics
+10. Smart Quick Search
 
-Because the backend runs silently, persist stdout/stderr and application errors into timestamped, rotating local log files.
+Provide an unobtrusive quick-filter experience for common use cases:
 
-Extend/reuse existing Diagnostics/System Info to show:
-- Backend status
-- Current application version
-- Configured port
-- Recent logs
-- View/Open Log File
-- Restart Backend where safe
+* Search by known field such as participantId.
+* Search by ObjectId.
+* Search by an exact value.
+* Reuse the active collection’s known fields.
+* Provide field suggestions while typing.
+* Support quick conversion into a persistent visual filter.
 
-Diagnostics for startup failures must remain accessible even when Angular/backend cannot start.
+Do not assume an input value matches every database field.
 
-Never expose credentials, PATs, tokens or secrets in logs.
+Use explicit field selection when necessary, with schema-aware suggestions.
 
-### 4. Preserve Existing Build & Installer
+A simple query should never require opening the Advanced Editor.
 
-Continue using the existing corporate-compatible **IExpress packaging**.
+11. Read-Only Security — Mandatory
 
-Do NOT require Inno Setup, Electron, administrator rights or externally installed software.
+Preserve the existing read-only database access model.
 
-Preserve:
-- Existing FULL/FAST/STAGE build options
-- Angular production build
-- Bundled Node executable/dependencies
-- `MIMCommandPanel-Setup.exe`
-- `MIMCommandPanel-portable.zip`
-- Existing Windows installation/shortcut behavior
+Advanced Query Editor must NOT become an unrestricted Mongo shell.
 
-Update packaging to include the desktop launcher, updater and necessary resources.
+Requirements:
 
-Use the portable ZIP as the versioned application update package after validating its structure and compatibility.
+* Never execute arbitrary JavaScript or eval.
+* No direct mongosh command execution.
+* No insert, update, delete, drop or database modifications.
+* Reject $out, $merge, $where, $function, $accumulator, mapReduce and any other potentially unsafe or unsupported operations.
+* Enforce strict server-side query validation using allowlisted operations/stages.
+* Do not rely solely on frontend validation.
+* Execute only approved MongoDB driver operations.
+* Preserve existing authentication and database permissions.
+* Use least-privilege read-only credentials wherever possible.
+* Set query timeouts, maximum result limits and resource limits.
+* Support cancellation where practical.
+* Prevent unrestricted collection scans or expensive queries where possible.
+* Validate database/collection identifiers and query structure.
+* Never expose credentials or connection secrets.
+* Avoid exposing data in logs or query-history records.
+* Switching environments must not silently rerun a query against another database.
 
-### 5. Persistent User Data
+Support explain/index inspection only where authorized.
 
-Separate replaceable application files from persistent per-user data.
+Keep the implementation compatible with corporate database security policies.
 
-Preserve across ALL updates:
-- Configuration and protected secrets
-- GitLab PAT/SSH settings
-- MongoDB configuration
-- Kiro CLI settings
-- Chat history/session memory
-- Personal KB, workflows and saved findings
-- QA evidence/screenshots
-- User profiles/preferences
-- Configured local repository paths and repositories
+12. MIM-Specific Intelligence
 
-Use suitable Windows per-user storage, respecting VDI profile persistence.
+Preserve the existing Ask MIM Expert integration.
 
-Safely migrate existing installations with backups, validation and recovery.
+Allow users to send selected query results or relevant document context to the main AI agent through an explicit action.
 
-Never replace, reset or silently delete personal data during updates.
+The agent may use existing authorized KB, Java code, API and service context to explain records or investigate issues.
 
-### 6. One-Click Automatic Update System
+Avoid sending entire large collections to Kiro.
 
-Implement a native launcher-managed updater that works independently of Angular/backend.
+Only transmit selected, minimized and permission-appropriate data.
 
-Use `version.json` as the installed-version source and compare it with a trusted published release manifest.
+Ordinary querying must remain deterministic and use zero Kiro credits.
 
-Prefer an existing approved internal release location such as GitLab Releases or Confluence, depending on available authenticated API/download access.
+13. Performance & Responsiveness
 
-Do NOT use GitLab `main` commits as the installer-release version.
+The Workbench must remain smooth on corporate Windows VDIs.
 
-Each release should publish:
-- Version
-- Release notes
-- Portable ZIP
-- Integrity checksum
-- Trusted download metadata
+Implement:
 
-On launch and through a manual Check for Updates action, detect new published versions without Kiro calls.
+* Lazy database/collection metadata discovery.
+* Bounded schema sampling.
+* Debounced field suggestions.
+* Efficient server-side pagination.
+* Stable cursor handling and predictable sorting.
+* Virtualized grids where useful.
+* Cancellation of stale requests.
+* Minimal frontend memory consumption.
+* Avoid loading entire collections into browser memory.
+* Avoid unnecessary backend calls.
+* Reuse existing MongoDB connections safely.
 
-Show:
-“New MIM Expert Version Available”
-Current Version → Latest Version
-Release notes
-[Update] [Later]
+Do not add heavyweight dependencies where existing components already provide the necessary functionality.
 
-Provide Update/Check for Updates access within the running app and through a launcher-controlled interface when the backend is unavailable.
+14. Integration & Implementation Quality
 
-### 7. Safe Update Execution
+Reuse existing Angular styling, navigation, theme, Node APIs, session storage and configuration patterns.
 
-When user clicks **Update**, automatically:
+Do not create a separate MongoDB client application.
 
-1. Check for unsafe active tasks and block/defer updates when necessary.
-2. Download the approved release package securely.
-3. Validate package authenticity, checksum, version and compatibility.
-4. Stage and extract the update into a separate version directory.
-5. Back up persistent configuration/data where migration requires it.
-6. Gracefully stop only MIM Expert-managed processes.
-7. Switch to the new application version without overwriting persistent data.
-8. Run any required safe/versioned data migrations.
-9. Restart the backend and application window.
-10. Verify health and display Update Successful.
+Enhance the current MIM DB Workbench in place.
 
-Show genuine progress and detailed errors throughout.
+Keep interfaces consistent with MIM Expert’s professional Windows desktop-style experience.
 
-Use a stable external updater/launcher so running application files are never overwritten unsafely.
+Preserve existing connection management and Natural Language querying.
 
-If installation/startup fails, automatically restore the previous working application version and report the failure without losing user data.
+Do not change other working modules.
 
-Never silently downgrade or execute unsigned/untrusted update code.
+Inspect dependencies and ensure any new npm packages are compatible with the available Artifactory, licensing requirements, bundled Node runtime and existing IExpress release build.
 
-Do not scrape SSO cookies, bypass corporate policies or store credentials in release packages. If authenticated programmatic download is unsupported, report the blocker rather than simulating automatic updates.
+15. End-to-End Acceptance Tests
 
-### 8. Existing Installation Migration
+Validate these actual user journeys:
 
-Support a safe one-time migration from existing IExpress installations to the new launcher/updater layout.
+1. Open a MongoDB collection and browse its documents.
+2. Right-click status = FAILED and filter without typing a query.
+3. Drag an existing cell into the Filter Builder.
+4. Drag a nested numeric field and change its operator.
+5. Sort results ascending/descending with one click.
+6. Add multiple AND/OR filter conditions.
+7. Switch Table, Tree and JSON modes without losing query context.
+8. Generate a query through Natural Language and refine it visually.
+9. Modify a query through the Advanced Editor.
+10. Run a permitted read-only aggregation pipeline.
+11. Execute a query, close/reopen the app, and get a contextual suggestion when typing a related query.
+12. Confirm that no query-history list or permanent history UI appears.
+13. Confirm that selecting a suggestion does not automatically execute it.
+14. Verify correct ObjectId, Date, Number, Boolean and nested-field handling.
+15. Verify sorting/filtering work across the full server-side result set, not only the currently displayed page.
+16. Verify that dangerous/write operations are blocked on the backend.
+17. Verify that normal visual interactions consume zero Kiro credits.
+18. Verify existing DB connections, Natural Language queries and Ask MIM Expert remain functional.
 
-Preserve installed settings, data, shortcuts and repositories.
+FINAL TARGET
 
-If an older installed release has no updater/bootstrap capability, provide a clearly documented one-time upgrade path; subsequent releases must support one-click updates.
+Transform the existing MIM DB Workbench into a Studio 3T-class, visual-first MongoDB querying workspace optimized for everyday MIM development, QA and production troubleshooting.
 
-### 9. Versioning & Build Integration
+Users should be able to open data, right-click values, drag fields into filters, sort with one click, refine queries visually and retrieve past queries through intelligent typing suggestions—all with minimal effort and a clean, uncluttered UI.
 
-Keep the installed frontend, backend, launcher and updater version metadata consistent.
+Implement real end-to-end functionality, not mock UI controls or placeholder actions.
 
-Automate generation of the portable update artifact and release manifest as part of the existing build process.
+Prioritize usability, reliability, data safety, performance and zero-credit deterministic operations.
 
-Do not bundle machine-specific configuration or credentials.
-
-Prevent stale Angular assets after upgrades.
-
-### 10. End-to-End Verification
-
-Test on a corporate-compatible Windows environment:
-
-- Fresh installation
-- Existing installation migration
-- Silent backend startup
-- Edge standalone app window
-- Duplicate launch prevention
-- Backend crash and log recovery
-- Update availability detection
-- One-click update from an older version
-- Complete preservation of configuration/chats/repos
-- Interrupted/failed update rollback
-- Browser fallback
-- Offline/network-failure behavior
-- Existing Git, Kiro, Mongo, OpenShift and Web IDE functionality
-
-Do not create mock-only behavior or replace working integrations.
-
-**FINAL TARGET:**
-
-Install MIM Expert once → launch it like a Windows desktop application → backend runs silently → user works in a dedicated Edge app window → new releases are detected automatically → user clicks Update → application safely upgrades and restarts with all existing configuration and data preserved.
-
-Implement this using the existing Angular + Node + VBS/PowerShell + IExpress ecosystem, with minimal external dependencies and ZERO Kiro credits for launcher/update operations.
 
 
 
