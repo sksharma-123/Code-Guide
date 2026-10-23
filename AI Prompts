@@ -644,6 +644,187 @@ Preserve all existing functionality.
 
 
 
+-----------------------
+
+
+
+Implement User-Controlled Agent Selection in MIM Expert
+
+Objective
+
+Add an agent-mode dropdown inside the existing chat input panel so users can explicitly select which existing sub-agent workflow to execute. The default must be Auto, preserving the current behavior exactly.
+
+The primary goal is to eliminate unnecessary follow-up prompts when users explicitly select Deep Analysis, Defect Analysis, or another specialized workflow.
+
+1. Inspect the Existing Architecture First
+
+Before making changes, inspect the existing Angular chat input component, chat/session state management, backend request flow, main-agent orchestration, sub-agent invocation mechanisms, and existing tool-dispatch logic.
+
+Identify the exact execution path for these existing sub-agents:
+
+* KB Analysis
+* Deep Analysis
+* Defect Analysis
+* Fix Implementation
+* New Implementation
+
+Reuse the existing architecture and sub-agents. Do not create duplicate agents, rewrite the main agent, or introduce a new orchestration framework.
+
+2. Add the Agent Mode Dropdown
+
+Add a compact dropdown inside the existing chat input panel or its input toolbar, positioned near the Send button without unnecessarily reducing the message input area.
+
+Options:
+
+* Auto
+* KB Analysis
+* Deep Analysis
+* Defect Analysis
+* Fix Implementation
+* New Implementation
+
+Requirements:
+
+* Auto must be selected by default for existing and new conversations unless an existing, intentional session preference dictates otherwise.
+* Use clear, professional labels consistent with the existing UI.
+* Display the currently selected mode clearly.
+* Preserve existing keyboard shortcuts, message submission, streaming, loading states, and responsive layout.
+* Do not create a separate page or modal for mode selection.
+
+3. Backend Routing: Explicit Selection Must Be Enforced
+
+Include the selected mode as an explicit, validated field in the existing chat request contract.
+
+Auto mode
+
+* Preserve the current main-agent behavior and automatic sub-agent selection.
+* Do not change the existing Auto-mode prompt, routing logic, or execution sequence unnecessarily.
+
+Manual modes
+
+* When a user explicitly selects a mode, route the request directly to the corresponding existing sub-agent/workflow.
+* Do not first run the normal Auto-mode routing process and then wait for the main agent to decide whether to invoke the selected sub-agent.
+* Preserve the conversation context and pass the relevant conversation history, user request, and existing session context required by the selected workflow.
+* Ensure the selected mode is actually enforced by the backend; changing only the frontend or adding mode text to the user prompt is insufficient.
+* Validate the mode against an explicit allowlist. Never accept arbitrary agent names or executable routing instructions from the client.
+
+The main agent may perform only the minimal coordination required by the existing architecture. It must not override an explicit manual selection and silently revert to Auto mode.
+
+4. Complete the Selected Workflow in the Initial Request
+
+The key requirement is that selecting a mode must materially change execution behavior.
+
+Deep Analysis
+
+* Start deep investigation on the first submitted request.
+* Select and invoke relevant existing tools/sources, such as GitLab code analysis, OpenShift pod/events/log analysis, DB analysis, and KB analysis, according to the query.
+* Do not stop after KB analysis merely because it provides a plausible answer.
+* Correlate relevant evidence and return the most complete evidence-backed result possible in the same request.
+* Reuse existing investigation capabilities rather than implementing parallel versions of them.
+
+Defect Analysis
+
+* Start the existing defect investigation workflow immediately.
+* Collect relevant code and runtime/data evidence using available tools.
+* Produce an evidence-backed assessment and root-cause analysis where sufficient evidence exists.
+* Do not require the user to repeat the request with phrases such as “deep analysis” or “defect analysis” after the initial selection.
+
+KB Analysis
+
+* Invoke the existing KB Analysis workflow directly and return its answer without unnecessary Auto-mode routing.
+
+Fix Implementation
+
+* Invoke the existing Fix Implementation workflow directly.
+* Preserve all existing explicit approval requirements, code-change restrictions, local repository boundaries, and diff-review mechanisms.
+* Do not automatically build, test, commit, push, or deploy unless the existing product explicitly supports and authorizes those actions.
+
+New Implementation
+
+* Invoke the existing New Implementation workflow directly.
+* Preserve existing implementation safeguards, repository boundaries, and user approval requirements.
+
+Tool execution rules
+
+* Invoke all relevant sources needed by the selected investigation, but do not blindly call every available tool for every request.
+* Parallelize independent read-only investigations where the existing runtime safely supports it.
+* Do not treat KB as a prerequisite or gate that prevents relevant code/runtime/DB investigation.
+* If an essential tool is unavailable, fails, or lacks permission, clearly report the limitation and continue with other relevant available evidence.
+* Never fabricate evidence or claim that an unexecuted tool was called.
+* Do not ask follow-up questions when the request can reasonably be investigated with the available context. Ask only when genuinely necessary information, authorization, or approval is missing.
+
+5. Persist Mode Per Conversation
+
+* Store the selected mode using the existing conversation/session state mechanism.
+* The selected manual mode must remain active for subsequent messages in that conversation until the user changes it.
+* Changing the mode must affect subsequent requests, not silently reroute an already-running request.
+* Different conversations must maintain independent mode selections.
+* Refreshing or reopening a conversation must restore its saved mode if persistence is supported by the existing session architecture.
+* Ensure older sessions without a saved mode safely default to Auto.
+* Clearly indicate the active mode so users understand which workflow will handle their next message.
+
+6. Maintain Existing Functionality
+
+Do not regress:
+
+* Existing chat history and conversation switching.
+* Streaming responses and cancellation.
+* Tool execution status and error handling.
+* Evidence references and RCA output.
+* Existing session/context management.
+* Fix Implementation approvals and change-review flow.
+* New Implementation behavior.
+* Existing Auto-mode performance and routing.
+* Current user profiles and permissions.
+
+Do not expose internal prompts, agent chain-of-thought, secrets, credentials, or unrestricted internal tool configuration in the UI.
+
+7. Testing and Acceptance Criteria
+
+Add or update appropriate automated tests for frontend selection, backend routing, session persistence, and agent execution.
+
+Verify the following:
+
+1. A new conversation defaults to Auto.
+2. Auto mode preserves the existing behavior.
+3. Selecting Deep Analysis invokes the Deep Analysis workflow on the first request without waiting for follow-up prompts.
+4. Selecting Defect Analysis invokes the Defect Analysis workflow immediately.
+5. Manual selection bypasses ordinary Auto-mode sub-agent selection.
+6. Relevant GitLab/OpenShift/DB tools are invoked on the first request when the selected analysis requires them and the tools are available.
+7. A plausible KB answer does not prematurely terminate a required deep investigation.
+8. Each remaining mode routes to its corresponding existing workflow.
+9. Mode selection persists independently across conversations and survives reopening where supported.
+10. Changing modes affects subsequent requests only.
+11. Unavailable tools and permission failures are reported accurately without fabricated findings.
+12. Existing Fix Implementation safety controls remain intact.
+13. No regressions occur in chat streaming, cancellation, history, evidence display, or existing Auto behavior.
+
+Use mocked tool responses and existing test infrastructure wherever possible. Do not depend on live corporate Jira, Splunk, GitLab, OpenShift, or DB access to validate the routing logic.
+
+Implementation Constraints
+
+* Inspect before editing.
+* Reuse existing components, services, request contracts, state management, and sub-agents wherever practical.
+* Keep the implementation minimal and maintainable.
+* Avoid unnecessary dependencies, architectural rewrites, and duplicate orchestration logic.
+* Do not modify unrelated features.
+* Do not build, commit, push, or deploy changes automatically.
+
+Final Report
+
+After implementation, summarize:
+
+1. Files and components changed.
+2. How the dropdown selection reaches the backend.
+3. How manual routing differs from Auto mode.
+4. How mode persistence works.
+5. Tests executed and their results.
+6. Any remaining limitations or blockers.
+
+If the existing architecture prevents any requirement from being implemented safely, explain the specific blocker instead of silently introducing a workaround.
+
+
+
 
 
 
